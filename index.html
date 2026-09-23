@@ -1701,8 +1701,66 @@
     </div>
 
     <!-- ==========================================
-       12. JAVASCRIPT APP LOGIC
+       12. JAVASCRIPT APP LOGIC & FIREBASE SDK
        ========================================== -->
+    <script type="module">
+        // Import Firebase Functions (Firebase v9/v10 Modular Web SDK)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase Configuration (ضع هنا معلومات Firebase الخاصة بمشروعك)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Export db & Firebase helpers to window object so legacy scripts can access them
+        window.db = db;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.serverTimestamp = serverTimestamp;
+
+        // Async Data Persistence Layer
+        window.syncDataToFirebase = async function() {
+            try {
+                await setDoc(doc(db, "settings", "mamas_table_data"), window.appData);
+                console.log("Data synced to Firebase Database successfully.");
+            } catch (err) {
+                console.error("Error syncing to Firebase: ", err);
+            }
+        };
+
+        window.loadDataFromFirebase = async function() {
+            try {
+                const docRef = doc(db, "settings", "mamas_table_data");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    window.appData = docSnap.data();
+                    localStorage.setItem('mamas_table_data', JSON.stringify(window.appData));
+                    if (window.renderWebsite) window.renderWebsite();
+                } else {
+                    console.log("No Firebase data found, using local default data.");
+                }
+            } catch (err) {
+                console.error("Error loading data from Firebase: ", err);
+            }
+        };
+
+        // Load data on startup
+        window.loadDataFromFirebase();
+    </script>
+
     <script>
         const DEFAULT_LOGO = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=150&q=80";
 
@@ -1820,6 +1878,7 @@
 
         // Application State
         let appData = JSON.parse(localStorage.getItem('mamas_table_data')) || initialData;
+        window.appData = appData;
         let cart = [];
         let currentSlideIndex = 0;
         let slideInterval = null;
@@ -1916,6 +1975,10 @@
 
         function saveData() {
             localStorage.setItem('mamas_table_data', JSON.stringify(appData));
+            window.appData = appData;
+            if (window.syncDataToFirebase) {
+                window.syncDataToFirebase();
+            }
             renderWebsite();
         }
 
@@ -2296,8 +2359,17 @@
             document.getElementById('overlay').classList.remove('active');
         }
 
-        // WhatsApp Order Dispatch
-        document.getElementById('sendWhatsappBtn').onclick = () => {
+        function setupEventListeners() {
+            document.getElementById('openCartBtn').onclick = openCart;
+            document.getElementById('closeCartBtn').onclick = closeCart;
+            document.getElementById('overlay').onclick = closeCart;
+            document.getElementById('hamburgerBtn').onclick = () => {
+                document.getElementById('navLinks').classList.toggle('active');
+            };
+        }
+
+        // WhatsApp Order Dispatch & Save Order to Firebase
+        document.getElementById('sendWhatsappBtn').onclick = async () => {
             if (cart.length === 0) {
                 alert("Votre panier est vide ! / السلة فارغة!");
                 return;
@@ -2322,31 +2394,34 @@
             cart.forEach(item => {
                 const subtotal = item.price * item.qty;
                 total += subtotal;
-                text += `- ${item.title} x${item.qty} : ${subtotal} DH\n`;
+                text += `- ${item.title} x${item.qty} (${subtotal} DH)\n`;
             });
 
-            text += `\n*TOTAL: ${total} DH*`;
+            text += `\n*TOTAL:* ${total.toFixed(2)} DH`;
 
-            const encoded = encodeURIComponent(text);
-            const waNumber = appData.general.whatsapp.replace(/[^0-9]/g, '');
-            window.open(`https://wa.me/${waNumber}?text=${encoded}`, '_blank');
+            // Save order in Firebase Orders collection
+            if (window.db && window.collection && window.addDoc) {
+                try {
+                    await window.addDoc(window.collection(window.db, "orders"), {
+                        customerName: name,
+                        phone: phone,
+                        address: address,
+                        items: cart,
+                        totalAmount: total,
+                        createdAt: window.serverTimestamp()
+                    });
+                    console.log("Order stored in Firebase successfully!");
+                } catch (e) {
+                    console.error("Could not store order in Firebase:", e);
+                }
+            }
+
+            const waNum = appData.general.whatsapp || "212600000000";
+            const url = `https://wa.me/${waNum}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
         };
 
-        // Event Listeners setup
-        function setupEventListeners() {
-            document.getElementById('openCartBtn').onclick = openCart;
-            document.getElementById('closeCartBtn').onclick = closeCart;
-            document.getElementById('overlay').onclick = closeCart;
-
-            // Mobile menu
-            document.getElementById('hamburgerBtn').onclick = () => {
-                document.getElementById('navLinks').classList.toggle('active');
-            };
-        }
-
-        // ==========================================
-        // ADMIN DASHBOARD LOGIC
-        // ==========================================
+        // ADMIN MODAL LOGIC
         function openAdminModal() {
             document.getElementById('adminView').classList.add('active');
         }
@@ -2360,9 +2435,9 @@
             if (pass === "admin123") {
                 document.getElementById('adminLoginScreen').style.display = 'none';
                 document.getElementById('adminDashboardScreen').style.display = 'block';
-                loadAdminData();
+                loadAdminFormValues();
             } else {
-                alert("Mot de passe incorrect.");
+                alert("Mot de passe incorrect!");
             }
         }
 
@@ -2373,13 +2448,12 @@
 
         function showAdminTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.admin-menu li').forEach(m => m.classList.remove('active'));
             document.getElementById(tabId).style.display = 'block';
-            document.querySelectorAll('.admin-menu li').forEach(li => li.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
 
-        function loadAdminData() {
-            // General
+        function loadAdminFormValues() {
             document.getElementById('admSiteName').value = appData.general.siteName;
             document.getElementById('admLogo').value = appData.general.logo;
             document.getElementById('admWhatsapp').value = appData.general.whatsapp;
@@ -2391,26 +2465,22 @@
             document.getElementById('admInsta').value = appData.general.instagram;
             document.getElementById('admTiktok').value = appData.general.tiktok;
 
-            // Hero
             document.getElementById('admHeroTitle').value = appData.hero.title;
-            document.getElementById('admHeroTitleAr').value = appData.hero.titleAr || '';
+            document.getElementById('admHeroTitleAr').value = appData.hero.titleAr || "";
             document.getElementById('admHeroDesc').value = appData.hero.desc;
-            document.getElementById('admHeroDescAr').value = appData.hero.descAr || '';
+            document.getElementById('admHeroDescAr').value = appData.hero.descAr || "";
             document.getElementById('admHeroImg').value = appData.hero.img;
 
-            // About
+            renderAdminSlides();
+            renderAdminOffers();
+            renderAdminCategories();
+            renderAdminProducts();
+
             document.getElementById('admAboutTitle').value = appData.about.title;
             document.getElementById('admAboutStory').value = appData.about.story;
             document.getElementById('admAboutImg').value = appData.about.img;
-
-            // Render Subtables
-            renderAdmSlides();
-            renderAdmOffers();
-            renderAdmCategories();
-            renderAdmProducts();
         }
 
-        // SAVE GENERAL
         function saveGeneralSettings() {
             appData.general.siteName = document.getElementById('admSiteName').value;
             appData.general.logo = document.getElementById('admLogo').value;
@@ -2423,10 +2493,9 @@
             appData.general.instagram = document.getElementById('admInsta').value;
             appData.general.tiktok = document.getElementById('admTiktok').value;
             saveData();
-            alert("Informations générales mises à jour !");
+            alert("Enregistré !");
         }
 
-        // SAVE HERO
         function saveHeroSettings() {
             appData.hero.title = document.getElementById('admHeroTitle').value;
             appData.hero.titleAr = document.getElementById('admHeroTitleAr').value;
@@ -2434,24 +2503,7 @@
             appData.hero.descAr = document.getElementById('admHeroDescAr').value;
             appData.hero.img = document.getElementById('admHeroImg').value;
             saveData();
-            alert("Hero Section mise à jour !");
-        }
-
-        // SLIDER ADMIN
-        function renderAdmSlides() {
-            const tbody = document.getElementById('admSlidesList');
-            tbody.innerHTML = '';
-            appData.slides.forEach((s, idx) => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><img src="${s.img}" style="width:50px; height:35px; object-fit:cover;"></td>
-                        <td>${s.title}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="deleteSlide(${idx})">Supprimer</button>
-                        </td>
-                    </tr>
-                `;
-            });
+            alert("Enregistré !");
         }
 
         function addSlide() {
@@ -2459,76 +2511,68 @@
             const desc = document.getElementById('slideDesc').value;
             const img = document.getElementById('slideImg').value;
 
-            if (title && img) {
-                appData.slides.push({ title, desc, img });
-                saveData();
-                renderAdmSlides();
-                document.getElementById('slideTitle').value = '';
-                document.getElementById('slideDesc').value = '';
-                document.getElementById('slideImg').value = '';
+            if (!title || !img) {
+                alert("Veuillez remplir le titre et l'image");
+                return;
             }
-        }
 
-        function deleteSlide(index) {
-            appData.slides.splice(index, 1);
+            appData.slides.push({ title, desc, img });
             saveData();
-            renderAdmSlides();
+            renderAdminSlides();
+            document.getElementById('slideTitle').value = '';
+            document.getElementById('slideDesc').value = '';
+            document.getElementById('slideImg').value = '';
         }
 
-        // OFFERS ADMIN
-        function renderAdmOffers() {
+        function renderAdminSlides() {
+            const tbody = document.getElementById('admSlidesList');
+            tbody.innerHTML = '';
+            appData.slides.forEach((s, idx) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${s.img}" style="width:50px; height:35px; object-fit:cover; border-radius:4px;"></td>
+                        <td>${s.title}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="deleteSlide(${idx})">Supprimer</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteSlide(idx) {
+            appData.slides.splice(idx, 1);
+            saveData();
+            renderAdminSlides();
+        }
+
+        function renderAdminOffers() {
             const container = document.getElementById('admOffersContainer');
             container.innerHTML = '';
-
-            appData.offers.forEach((o, idx) => {
+            appData.offers.forEach((off, idx) => {
                 container.innerHTML += `
-                    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h5>Plat Offre ${idx + 1}</h5>
-                        <div class="form-group"><label>Titre</label><input type="text" id="offTitle_${idx}" value="${o.title}"></div>
-                        <div class="form-group"><label>Description</label><input type="text" id="offDesc_${idx}" value="${o.desc}"></div>
-                        <div class="form-group"><label>Prix (DH)</label><input type="number" id="offPrix_${idx}" value="${o.price}"></div>
-                        <div class="form-group"><label>Ancien Prix (DH)</label><input type="number" id="offOldPrix_${idx}" value="${o.oldPrice || ''}"></div>
-                        <div class="form-group"><label>Badge</label><input type="text" id="offBadge_${idx}" value="${o.badge}"></div>
-                        <div class="form-group">
-                            <label>URL / Upload Image Offre</label>
-                            <div class="file-upload-box">
-                                <input type="text" id="offImg_${idx}" value="${o.img}">
-                                <input type="file" accept="image/*" onchange="uploadImageFile(event, 'offImg_${idx}')">
-                            </div>
-                        </div>
+                    <div style="border: 1px dashed #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                        <h5>Offre ${idx + 1}</h5>
+                        <div class="form-group"><label>Titre</label><input type="text" id="offT_${idx}" value="${off.title}"></div>
+                        <div class="form-group"><label>Description</label><input type="text" id="offD_${idx}" value="${off.desc}"></div>
+                        <div class="form-group"><label>Prix (DH)</label><input type="number" id="offP_${idx}" value="${off.price}"></div>
+                        <div class="form-group"><label>Ancien Prix (DH)</label><input type="number" id="offOP_${idx}" value="${off.oldPrice}"></div>
+                        <div class="form-group"><label>Badge</label><input type="text" id="offB_${idx}" value="${off.badge}"></div>
+                        <div class="form-group"><label>Image</label><input type="text" id="offI_${idx}" value="${off.img}"></div>
                     </div>
                 `;
             });
         }
 
         function saveOffersSettings() {
-            appData.offers.forEach((o, idx) => {
-                o.title = document.getElementById(`offTitle_${idx}`).value;
-                o.desc = document.getElementById(`offDesc_${idx}`).value;
-                o.price = parseFloat(document.getElementById(`offPrix_${idx}`).value) || 0;
-                o.oldPrice = parseFloat(document.getElementById(`offOldPrix_${idx}`).value) || null;
-                o.badge = document.getElementById(`offBadge_${idx}`).value;
-                o.img = document.getElementById(`offImg_${idx}`).value;
+            appData.offers.forEach((off, idx) => {
+                off.title = document.getElementById(`offT_${idx}`).value;
+                off.desc = document.getElementById(`offD_${idx}`).value;
+                off.price = parseFloat(document.getElementById(`offP_${idx}`).value);
+                off.oldPrice = parseFloat(document.getElementById(`offOP_${idx}`).value);
+                off.badge = document.getElementById(`offB_${idx}`).value;
+                off.img = document.getElementById(`offI_${idx}`).value;
             });
             saveData();
-            alert("Les 3 offres ont été enregistrées !");
-        }
-
-        // CATEGORIES ADMIN
-        function renderAdmCategories() {
-            const list = document.getElementById('admCatList');
-            list.innerHTML = '';
-            appData.categories.forEach((cat, idx) => {
-                if (cat !== "Tous") {
-                    list.innerHTML += `<li>${cat} <a href="#" style="color:red; margin-left:10px;" onclick="deleteCategory(${idx})">Supprimer</a></li>`;
-                }
-            });
-
-            const select = document.getElementById('pCat');
-            select.innerHTML = '';
-            appData.categories.filter(c => c !== "Tous").forEach(c => {
-                select.innerHTML += `<option value="${c}">${c}</option>`;
-            });
+            alert("Offres enregistrées !");
         }
 
         function addCategory() {
@@ -2536,19 +2580,36 @@
             if (cat && !appData.categories.includes(cat)) {
                 appData.categories.push(cat);
                 saveData();
-                renderAdmCategories();
+                renderAdminCategories();
                 document.getElementById('catNameInput').value = '';
             }
         }
 
-        function deleteCategory(index) {
-            appData.categories.splice(index, 1);
-            saveData();
-            renderAdmCategories();
+        function renderAdminCategories() {
+            const ul = document.getElementById('admCatList');
+            ul.innerHTML = '';
+            appData.categories.forEach((c, idx) => {
+                ul.innerHTML += `
+                    <li style="margin-bottom: 5px;">
+                        ${c} ${c !== 'Tous' ? `<button class="btn btn-danger btn-sm" style="margin-left:10px;" onclick="deleteCategory(${idx})">x</button>` : ''}
+                    </li>
+                `;
+            });
         }
 
-        // PRODUCTS ADMIN
-        function renderAdmProducts() {
+        function deleteCategory(idx) {
+            appData.categories.splice(idx, 1);
+            saveData();
+            renderAdminCategories();
+        }
+
+        function renderAdminProducts() {
+            const selectCat = document.getElementById('pCat');
+            selectCat.innerHTML = '';
+            appData.categories.forEach(c => {
+                if (c !== 'Tous') selectCat.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+
             const tbody = document.getElementById('admProductsList');
             tbody.innerHTML = '';
             appData.products.forEach((p, idx) => {
@@ -2558,9 +2619,9 @@
                         <td>${p.nom}</td>
                         <td>${p.prix} DH</td>
                         <td>${p.cat}</td>
-                        <td>${p.allowedInPack ? '<span style="color:green; font-weight:bold;">Oui (نعم)</span>' : 'Non'}</td>
+                        <td>${p.allowedInPack ? 'Oui (نعم)' : 'Non (لا)'}</td>
                         <td class="action-btns">
-                            <button class="btn btn-warning btn-sm" onclick="editProduct(${idx})">Modifier</button>
+                            <button class="btn btn-warning btn-sm" onclick="editProduct(${idx})">Éditer</button>
                             <button class="btn btn-danger btn-sm" onclick="deleteProduct(${idx})">Supprimer</button>
                         </td>
                     </tr>
@@ -2569,30 +2630,34 @@
         }
 
         function saveProductForm() {
-            const idx = parseInt(document.getElementById('prodEditIndex').value);
-            const productObj = {
-                nom: document.getElementById('pNom').value,
-                img: document.getElementById('pImg').value,
-                desc: document.getElementById('pDesc').value,
-                prix: parseFloat(document.getElementById('pPrix').value) || 0,
-                ancienPrix: parseFloat(document.getElementById('pAncienPrix').value) || null,
-                cat: document.getElementById('pCat').value,
-                badge: document.getElementById('pBadge').value,
-                allowedInPack: document.getElementById('pAllowedInPack').checked
-            };
+            const editIdx = parseInt(document.getElementById('prodEditIndex').value);
+            const nom = document.getElementById('pNom').value;
+            const img = document.getElementById('pImg').value;
+            const desc = document.getElementById('pDesc').value;
+            const prix = parseFloat(document.getElementById('pPrix').value);
+            const ancienPrix = parseFloat(document.getElementById('pAncienPrix').value) || null;
+            const cat = document.getElementById('pCat').value;
+            const badge = document.getElementById('pBadge').value;
+            const allowedInPack = document.getElementById('pAllowedInPack').checked;
 
-            if (idx === -1) {
-                appData.products.push(productObj);
+            if (!nom || isNaN(prix)) {
+                alert("Veuillez remplir le nom et le prix.");
+                return;
+            }
+
+            const pObj = { nom, img, desc, prix, ancienPrix, cat, badge, allowedInPack };
+
+            if (editIdx === -1) {
+                appData.products.push(pObj);
             } else {
-                appData.products[idx] = productObj;
-                document.getElementById('prodEditIndex').value = -1;
+                appData.products[editIdx] = pObj;
+                document.getElementById('prodEditIndex').value = "-1";
                 document.getElementById('prodFormTitle').innerText = "Ajouter un Produit";
             }
 
             saveData();
-            renderAdmProducts();
-            
-            // Clear inputs
+            renderAdminProducts();
+
             document.getElementById('pNom').value = '';
             document.getElementById('pImg').value = '';
             document.getElementById('pDesc').value = '';
@@ -2602,10 +2667,10 @@
             document.getElementById('pAllowedInPack').checked = false;
         }
 
-        function editProduct(index) {
-            const p = appData.products[index];
-            document.getElementById('prodEditIndex').value = index;
-            document.getElementById('prodFormTitle').innerText = "Modifier le Produit";
+        function editProduct(idx) {
+            const p = appData.products[idx];
+            document.getElementById('prodEditIndex').value = idx;
+            document.getElementById('prodFormTitle').innerText = "Modifier Produit: " + p.nom;
             document.getElementById('pNom').value = p.nom;
             document.getElementById('pImg').value = p.img;
             document.getElementById('pDesc').value = p.desc;
@@ -2616,54 +2681,52 @@
             document.getElementById('pAllowedInPack').checked = !!p.allowedInPack;
         }
 
-        function deleteProduct(index) {
-            appData.products.splice(index, 1);
+        function deleteProduct(idx) {
+            appData.products.splice(idx, 1);
             saveData();
-            renderAdmProducts();
+            renderAdminProducts();
         }
 
-        // ABOUT ADMIN
         function saveAboutSettings() {
             appData.about.title = document.getElementById('admAboutTitle').value;
             appData.about.story = document.getElementById('admAboutStory').value;
             appData.about.img = document.getElementById('admAboutImg').value;
             saveData();
-            alert("Section À Propos mise à jour !");
+            alert("À propos enregistré !");
         }
 
-        // DATA EXPORT / IMPORT / RESET
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "mamas_table_data.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "mamas_table_backup.json");
+            dlAnchorElem.click();
         }
 
         function importData(event) {
-            const fileReader = new FileReader();
-            fileReader.onload = function(e) {
-                try {
-                    const importedObj = JSON.parse(e.target.result);
-                    appData = importedObj;
-                    saveData();
-                    loadAdminData();
-                    alert("Données importées avec succès !");
-                } catch (err) {
-                    alert("Fichier JSON invalide.");
-                }
-            };
-            fileReader.readAsText(event.target.files[0]);
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        appData = JSON.parse(e.target.result);
+                        saveData();
+                        loadAdminFormValues();
+                        alert("Données importées avec succès !");
+                    } catch (err) {
+                        alert("Fichier JSON invalide !");
+                    }
+                };
+                reader.readAsText(file);
+            }
         }
 
         function resetWebsiteData() {
-            if (confirm("Êtes-vous sûr de vouloir réinitialiser toutes les données aux valeurs par défaut ?")) {
+            if (confirm("Voulez-vous vraiment réinitialiser toutes les données aux valeurs par défaut ?")) {
                 appData = JSON.parse(JSON.stringify(initialData));
                 saveData();
-                loadAdminData();
-                alert("Site réinitialisé avec succès !");
+                loadAdminFormValues();
+                alert("Site réinitialisé !");
             }
         }
     </script>
