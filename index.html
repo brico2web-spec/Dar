@@ -1746,13 +1746,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // Integrated Firebase Configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+          apiKey: "AIzaSyA3yZMl4Q460UE0ezcpB3gaOyxm-xzZOf4",
+          authDomain: "mamastable-7e23f.firebaseapp.com",
+          projectId: "mamastable-7e23f",
+          storageBucket: "mamastable-7e23f.firebasestorage.app",
+          messagingSenderId: "590532133919",
+          appId: "1:590532133919:web:c3a1b71f451a248495c12a"
         };
 
         // Function to update the LED indicator UI
@@ -1773,51 +1774,47 @@
         };
 
         try {
-            if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-                window.setFirebaseStatus(false);
-            } else {
-                const app = initializeApp(firebaseConfig);
-                const db = getFirestore(app);
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
 
-                window.db = db;
-                window.doc = doc;
-                window.setDoc = setDoc;
-                window.getDoc = getDoc;
-                window.collection = collection;
-                window.addDoc = addDoc;
-                window.serverTimestamp = serverTimestamp;
+            window.db = db;
+            window.doc = doc;
+            window.setDoc = setDoc;
+            window.getDoc = getDoc;
+            window.collection = collection;
+            window.addDoc = addDoc;
+            window.serverTimestamp = serverTimestamp;
 
-                window.syncDataToFirebase = async function() {
-                    try {
-                        await setDoc(doc(db, "settings", "mamas_table_data"), window.appData);
-                        console.log("Data synced to Firebase Database successfully.");
-                        window.setFirebaseStatus(true);
-                    } catch (err) {
-                        console.error("Error syncing to Firebase: ", err);
-                        window.setFirebaseStatus(false);
+            window.syncDataToFirebase = async function() {
+                try {
+                    await setDoc(doc(db, "settings", "mamas_table_data"), window.appData);
+                    console.log("Data synced to Firebase Database successfully.");
+                    window.setFirebaseStatus(true);
+                } catch (err) {
+                    console.error("Error syncing to Firebase: ", err);
+                    window.setFirebaseStatus(false);
+                }
+            };
+
+            window.loadDataFromFirebase = async function() {
+                try {
+                    const docRef = doc(db, "settings", "mamas_table_data");
+                    const docSnap = await getDoc(docRef);
+                    window.setFirebaseStatus(true);
+                    if (docSnap.exists()) {
+                        window.appData = docSnap.data();
+                        localStorage.setItem('mamas_table_data', JSON.stringify(window.appData));
+                        if (window.renderWebsite) window.renderWebsite();
+                    } else {
+                        console.log("No Firebase data found, using local default data.");
                     }
-                };
+                } catch (err) {
+                    console.error("Error loading data from Firebase: ", err);
+                    window.setFirebaseStatus(false);
+                }
+            };
 
-                window.loadDataFromFirebase = async function() {
-                    try {
-                        const docRef = doc(db, "settings", "mamas_table_data");
-                        const docSnap = await getDoc(docRef);
-                        window.setFirebaseStatus(true);
-                        if (docSnap.exists()) {
-                            window.appData = docSnap.data();
-                            localStorage.setItem('mamas_table_data', JSON.stringify(window.appData));
-                            if (window.renderWebsite) window.renderWebsite();
-                        } else {
-                            console.log("No Firebase data found, using local default data.");
-                        }
-                    } catch (err) {
-                        console.error("Error loading data from Firebase: ", err);
-                        window.setFirebaseStatus(false);
-                    }
-                };
-
-                window.loadDataFromFirebase();
-            }
+            window.loadDataFromFirebase();
         } catch (e) {
             console.error("Firebase init failed: ", e);
             window.setFirebaseStatus(false);
@@ -2778,7 +2775,7 @@
                 appData = initialData;
                 saveData();
                 loadAdminData();
-                alert("Le site a été réinitialisé !");
+                alert("Données réinitialisées avec succès !");
             }
         }
     </script>
