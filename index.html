@@ -202,7 +202,6 @@
             color: var(--primary-color);
         }
 
-        /* تصغير زر وأيقونة السلة */
         .cart-icon-btn {
             position: relative;
             background: var(--white);
@@ -411,7 +410,6 @@
             margin-bottom: 30px;
         }
 
-        /* تصميم خانات العروض التفاعلية مع الصورة */
         .pack-dish-card {
             border: 2px solid var(--glass-border);
             border-radius: 12px;
@@ -1019,6 +1017,39 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.04);
         }
 
+        /* Firebase Status Light Styles */
+        .firebase-status-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: #f1f3f5;
+            border: 1px solid #e9ecef;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            background-color: #d9534f; /* Red default */
+        }
+
+        .status-dot.connected {
+            background-color: #28a745; /* Green connected */
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(40, 167, 69, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
         .admin-card {
             background: var(--white);
             padding: 25px;
@@ -1220,7 +1251,7 @@
         <div class="container">
             <div class="pack-card">
                 <h2 id="packHeaderTitle" class="brand-font" style="font-size: 2.2rem; color: var(--dark-color);">OFFRE SPÉCIALE : 3 PLATS AU CHOIX</h2>
-                <p id="packHeaderDesc" style="color: var(--text-muted);">Composez votre menu personnalisé parmi nos mâtets autorisés ci-dessous !</p>
+                <p id="packHeaderDesc" style="color: var(--text-muted);">Composez votre menu personnalisé parmi nos plats autorisés ci-dessous !</p>
                 <div class="pack-price-tag" id="packPriceTag">3 Plats = 200 DH</div>
 
                 <div class="select-group-grid">
@@ -1413,7 +1444,7 @@
                 <textarea id="custAddress" placeholder="Adresse de livraison *" rows="2" required></textarea>
             </div>
 
-            <button class="btn btn-primary" style="width: 100%;" id="sendWhatsappBtn">
+            <button class="btn btn-primary" style="width: 100%;" id="sendWhatsappBtn" onclick="sendOrderToWhatsapp()">
                 <i class="fa-brands fa-whatsapp"></i> <span id="btnWaLabel">Commander via WhatsApp</span>
             </button>
         </div>
@@ -1456,7 +1487,15 @@
                 <div class="admin-content">
                     <div class="admin-header">
                         <h3 id="adminTabTitle">Informations Générales</h3>
-                        <button class="btn btn-secondary btn-sm" onclick="closeAdminModal()">Voir le site</button>
+                        
+                        <!-- FIREBASE STATUS LIGHT -->
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div class="firebase-status-box" id="firebaseStatusBox">
+                                <span class="status-dot" id="firebaseStatusDot"></span>
+                                <span id="firebaseStatusText">Firebase: non connecté</span>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="closeAdminModal()">Voir le site</button>
+                        </div>
                     </div>
 
                     <!-- TAB 1: GENERAL -->
@@ -1704,11 +1743,9 @@
        12. JAVASCRIPT APP LOGIC & FIREBASE SDK
        ========================================== -->
     <script type="module">
-        // Import Firebase Functions (Firebase v9/v10 Modular Web SDK)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Firebase Configuration (ضع هنا معلومات Firebase الخاصة بمشروعك)
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_AUTH_DOMAIN.firebaseapp.com",
@@ -1718,55 +1755,80 @@
             appId: "YOUR_APP_ID"
         };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Export db & Firebase helpers to window object so legacy scripts can access them
-        window.db = db;
-        window.doc = doc;
-        window.setDoc = setDoc;
-        window.getDoc = getDoc;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.serverTimestamp = serverTimestamp;
-
-        // Async Data Persistence Layer
-        window.syncDataToFirebase = async function() {
-            try {
-                await setDoc(doc(db, "settings", "mamas_table_data"), window.appData);
-                console.log("Data synced to Firebase Database successfully.");
-            } catch (err) {
-                console.error("Error syncing to Firebase: ", err);
-            }
-        };
-
-        window.loadDataFromFirebase = async function() {
-            try {
-                const docRef = doc(db, "settings", "mamas_table_data");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    window.appData = docSnap.data();
-                    localStorage.setItem('mamas_table_data', JSON.stringify(window.appData));
-                    if (window.renderWebsite) window.renderWebsite();
+        // Function to update the LED indicator UI
+        window.setFirebaseStatus = function(isConnected) {
+            const dot = document.getElementById('firebaseStatusDot');
+            const text = document.getElementById('firebaseStatusText');
+            if (dot && text) {
+                if (isConnected) {
+                    dot.classList.add('connected');
+                    text.innerText = "Firebase: connecté";
+                    text.style.color = "#28a745";
                 } else {
-                    console.log("No Firebase data found, using local default data.");
+                    dot.classList.remove('connected');
+                    text.innerText = "Firebase: non connecté";
+                    text.style.color = "#d9534f";
                 }
-            } catch (err) {
-                console.error("Error loading data from Firebase: ", err);
             }
         };
 
-        // Load data on startup
-        window.loadDataFromFirebase();
+        try {
+            if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+                window.setFirebaseStatus(false);
+            } else {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+
+                window.db = db;
+                window.doc = doc;
+                window.setDoc = setDoc;
+                window.getDoc = getDoc;
+                window.collection = collection;
+                window.addDoc = addDoc;
+                window.serverTimestamp = serverTimestamp;
+
+                window.syncDataToFirebase = async function() {
+                    try {
+                        await setDoc(doc(db, "settings", "mamas_table_data"), window.appData);
+                        console.log("Data synced to Firebase Database successfully.");
+                        window.setFirebaseStatus(true);
+                    } catch (err) {
+                        console.error("Error syncing to Firebase: ", err);
+                        window.setFirebaseStatus(false);
+                    }
+                };
+
+                window.loadDataFromFirebase = async function() {
+                    try {
+                        const docRef = doc(db, "settings", "mamas_table_data");
+                        const docSnap = await getDoc(docRef);
+                        window.setFirebaseStatus(true);
+                        if (docSnap.exists()) {
+                            window.appData = docSnap.data();
+                            localStorage.setItem('mamas_table_data', JSON.stringify(window.appData));
+                            if (window.renderWebsite) window.renderWebsite();
+                        } else {
+                            console.log("No Firebase data found, using local default data.");
+                        }
+                    } catch (err) {
+                        console.error("Error loading data from Firebase: ", err);
+                        window.setFirebaseStatus(false);
+                    }
+                };
+
+                window.loadDataFromFirebase();
+            }
+        } catch (e) {
+            console.error("Firebase init failed: ", e);
+            window.setFirebaseStatus(false);
+        }
     </script>
 
     <script>
         const DEFAULT_LOGO = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=150&q=80";
 
-        // INITIAL DEFAULT DATA STORE
         const initialData = {
-            lang: 'fr', // 'fr' or 'ar'
+            lang: 'fr',
             general: {
                 siteName: "MAMA'S Table",
                 logo: DEFAULT_LOGO,
@@ -1876,14 +1938,12 @@
             }
         };
 
-        // Application State
         let appData = JSON.parse(localStorage.getItem('mamas_table_data')) || initialData;
         window.appData = appData;
         let cart = [];
         let currentSlideIndex = 0;
         let slideInterval = null;
 
-        // Translations Dictionary
         const dict = {
             fr: {
                 langBtn: "العربية",
@@ -1967,7 +2027,6 @@
             }
         };
 
-        // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
             renderWebsite();
             setupEventListeners();
@@ -1982,13 +2041,11 @@
             renderWebsite();
         }
 
-        // TOGGLE LANGUAGE (FR/AR)
         function toggleLanguage() {
             appData.lang = appData.lang === 'fr' ? 'ar' : 'fr';
             saveData();
         }
 
-        // HELPER TO CONVERT FILE TO BASE64
         function uploadImageFile(event, targetInputId) {
             const file = event.target.files[0];
             if (file) {
@@ -2000,18 +2057,13 @@
             }
         }
 
-        // ==========================================
-        // RENDER WEBSITE COMPONENTS
-        // ==========================================
         function renderWebsite() {
             const currentLang = appData.lang || 'fr';
             const t = dict[currentLang];
 
-            // Set Direction and Font
             document.documentElement.lang = currentLang;
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
 
-            // Nav Translations
             document.getElementById('langLabel').innerText = t.langBtn;
             document.getElementById('navHome').innerText = t.navHome;
             document.getElementById('navPack').innerText = t.navPack;
@@ -2021,7 +2073,6 @@
             document.getElementById('navContact').innerText = t.navContact;
             document.getElementById('cartBtnLabel').innerText = t.cartBtn;
 
-            // General Info
             document.getElementById('siteName').innerText = appData.general.siteName;
             document.getElementById('siteLogo').src = appData.general.logo;
             document.getElementById('footerLogo').src = appData.general.logo;
@@ -2039,16 +2090,13 @@
             document.getElementById('instaLink').href = appData.general.instagram;
             document.getElementById('tiktokLink').href = appData.general.tiktok;
 
-            // Hero Section
             document.getElementById('heroTitle').innerText = currentLang === 'ar' ? (appData.hero.titleAr || appData.hero.title) : appData.hero.title;
             document.getElementById('heroDesc').innerText = currentLang === 'ar' ? (appData.hero.descAr || appData.hero.desc) : appData.hero.desc;
             document.getElementById('heroBtnText').innerText = currentLang === 'ar' ? (appData.hero.btnTextAr || appData.hero.btnText) : appData.hero.btnText;
             document.getElementById('heroImg').src = appData.hero.img;
 
-            // Slider
             renderSlider();
 
-            // Pack 200 DH Section
             document.getElementById('packHeaderTitle').innerText = t.packTitle;
             document.getElementById('packHeaderDesc').innerText = t.packSub;
             document.getElementById('packPriceTag').innerText = t.packPrice;
@@ -2058,18 +2106,15 @@
             document.getElementById('btnAddPackBtn').innerText = t.btnAddPack;
             renderPackDropdowns();
 
-            // Offers
             document.getElementById('offSectionTitle').innerText = t.offTitle;
             document.getElementById('offSectionSub').innerText = t.offSub;
             renderOffers();
 
-            // Categories & Products
             document.getElementById('menuSectionTitle').innerText = t.menuTitle;
             document.getElementById('menuSectionSub').innerText = t.menuSub;
             renderCategories();
             renderProducts("Tous");
 
-            // About
             document.getElementById('aboutTitle').innerText = t.aboutTitle;
             document.getElementById('aboutStory').innerText = appData.about.story;
             document.getElementById('aboutImg').src = appData.about.img;
@@ -2078,7 +2123,6 @@
             document.getElementById('feat3').innerText = t.feat3;
             document.getElementById('feat4').innerText = t.feat4;
 
-            // Contact
             document.getElementById('contactSectionTitle').innerText = t.contactTitle;
             document.getElementById('contactSectionSub').innerText = t.contactSub;
             document.getElementById('cCardPhone').innerText = t.cPhone;
@@ -2086,7 +2130,6 @@
             document.getElementById('cCardAddr').innerText = t.cAddr;
             document.getElementById('cCardHours').innerText = t.cHours;
 
-            // Footer
             document.getElementById('fTitleNav').innerText = t.fNavTitle;
             document.getElementById('fTitleInfo').innerText = t.fInfoTitle;
             document.getElementById('fNavHome').innerText = t.navHome;
@@ -2096,7 +2139,6 @@
             document.getElementById('fNavAbout').innerText = t.navAbout;
             document.getElementById('fNavContact').innerText = t.navContact;
 
-            // Cart Labels
             document.getElementById('cartTitle').innerText = t.cartTitle;
             document.getElementById('cartTotalLabel').innerText = t.cartTotalLabel;
             document.getElementById('btnWaLabel').innerText = t.btnWaLabel;
@@ -2105,7 +2147,6 @@
             document.getElementById('custAddress').placeholder = t.phAddr;
         }
 
-        // PACK DROPDOWNS & IMAGES POPULATION (200 DH)
         function renderPackDropdowns() {
             const allowedProds = appData.products.filter(p => p.allowedInPack);
             const select1 = document.getElementById('packSelect1');
@@ -2162,7 +2203,6 @@
             addToCart(packTitle, 200, appData.general.logo);
         }
 
-        // SLIDER
         function renderSlider() {
             const track = document.getElementById('sliderTrack');
             const dots = document.getElementById('sliderDots');
@@ -2210,7 +2250,6 @@
             }, 5000);
         }
 
-        // OFFERS
         function renderOffers() {
             const grid = document.getElementById('offersGrid');
             grid.innerHTML = '';
@@ -2237,7 +2276,6 @@
             });
         }
 
-        // CATEGORIES
         function renderCategories() {
             const container = document.getElementById('categoriesContainer');
             container.innerHTML = '';
@@ -2255,7 +2293,6 @@
             });
         }
 
-        // PRODUCTS
         function renderProducts(category) {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
@@ -2287,9 +2324,6 @@
             });
         }
 
-        // ==========================================
-        // CART & ORDERING
-        // ==========================================
         function addToCart(title, price, img) {
             const existing = cart.find(item => item.title === title);
             if (existing) {
@@ -2320,20 +2354,22 @@
                     <img src="${item.img}" alt="${item.title}">
                     <div class="cart-item-details">
                         <div class="cart-item-title">${item.title}</div>
-                        <div class="cart-item-price">${item.price} DH</div>
+                        <div class="cart-item-price">${item.price} DH x ${item.qty}</div>
                         <div class="qty-controls">
                             <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
                             <span>${item.qty}</span>
                             <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
                         </div>
                     </div>
-                    <div class="remove-item" onclick="removeItem(${index})"><i class="fa-solid fa-trash"></i></div>
+                    <div class="remove-item" onclick="removeFromCart(${index})">
+                        <i class="fa-solid fa-trash"></i>
+                    </div>
                 `;
                 cartItemsContainer.appendChild(itemEl);
             });
 
             cartCount.innerText = count;
-            cartTotal.innerText = total.toFixed(2) + " DH";
+            cartTotal.innerText = total.toFixed(2) + ' DH';
         }
 
         function changeQty(index, delta) {
@@ -2344,7 +2380,7 @@
             updateCart();
         }
 
-        function removeItem(index) {
+        function removeFromCart(index) {
             cart.splice(index, 1);
             updateCart();
         }
@@ -2359,19 +2395,9 @@
             document.getElementById('overlay').classList.remove('active');
         }
 
-        function setupEventListeners() {
-            document.getElementById('openCartBtn').onclick = openCart;
-            document.getElementById('closeCartBtn').onclick = closeCart;
-            document.getElementById('overlay').onclick = closeCart;
-            document.getElementById('hamburgerBtn').onclick = () => {
-                document.getElementById('navLinks').classList.toggle('active');
-            };
-        }
-
-        // WhatsApp Order Dispatch & Save Order to Firebase
-        document.getElementById('sendWhatsappBtn').onclick = async () => {
+        function sendOrderToWhatsapp() {
             if (cart.length === 0) {
-                alert("Votre panier est vide ! / السلة فارغة!");
+                alert("Votre panier est vide !");
                 return;
             }
 
@@ -2380,48 +2406,45 @@
             const address = document.getElementById('custAddress').value.trim();
 
             if (!name || !phone || !address) {
-                alert("Veuillez remplir vos informations / المرجو ملء بيانات التوصيل");
+                alert("Veuillez remplir tous les champs obligatoires (Nom, Téléphone, Adresse).");
                 return;
             }
 
-            let text = `*NOUVELLE COMMANDE - MAMA'S TABLE*\n\n`;
-            text += `*Nom:* ${name}\n`;
-            text += `*Téléphone:* ${phone}\n`;
-            text += `*Adresse:* ${address}\n\n`;
-            text += `*Détails de la Commande:*\n`;
+            let message = `🛒 *NOUVELLE COMMANDE - ${appData.general.siteName}*\n\n`;
+            message += `👤 *Client:* ${name}\n`;
+            message += `📞 *Téléphone:* ${phone}\n`;
+            message += `📍 *Adresse:* ${address}\n\n`;
+            message += `📝 *Détail de la commande:*\n`;
 
             let total = 0;
             cart.forEach(item => {
                 const subtotal = item.price * item.qty;
                 total += subtotal;
-                text += `- ${item.title} x${item.qty} (${subtotal} DH)\n`;
+                message += `• ${item.title} x${item.qty} = ${subtotal} DH\n`;
             });
 
-            text += `\n*TOTAL:* ${total.toFixed(2)} DH`;
+            message += `\n💰 *TOTAL:* ${total} DH`;
 
-            // Save order in Firebase Orders collection
-            if (window.db && window.collection && window.addDoc) {
-                try {
-                    await window.addDoc(window.collection(window.db, "orders"), {
-                        customerName: name,
-                        phone: phone,
-                        address: address,
-                        items: cart,
-                        totalAmount: total,
-                        createdAt: window.serverTimestamp()
-                    });
-                    console.log("Order stored in Firebase successfully!");
-                } catch (e) {
-                    console.error("Could not store order in Firebase:", e);
-                }
-            }
+            const encodedMsg = encodeURIComponent(message);
+            const waNumber = appData.general.whatsapp || "212600000000";
+            window.open(`https://wa.me/${waNumber}?text=${encodedMsg}`, '_blank');
+        }
 
-            const waNum = appData.general.whatsapp || "212600000000";
-            const url = `https://wa.me/${waNum}?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-        };
+        function setupEventListeners() {
+            document.getElementById('openCartBtn').onclick = openCart;
+            document.getElementById('closeCartBtn').onclick = closeCart;
+            document.getElementById('overlay').onclick = closeCart;
 
-        // ADMIN MODAL LOGIC
+            const hamburger = document.getElementById('hamburgerBtn');
+            const navLinks = document.getElementById('navLinks');
+            hamburger.onclick = () => {
+                navLinks.classList.toggle('active');
+            };
+        }
+
+        /* ==========================================
+           ADMIN DASHBOARD FUNCTIONS
+           ========================================== */
         function openAdminModal() {
             document.getElementById('adminView').classList.add('active');
         }
@@ -2431,29 +2454,32 @@
         }
 
         function handleAdminLogin() {
+            const email = document.getElementById('adminEmail').value;
             const pass = document.getElementById('adminPass').value;
-            if (pass === "admin123") {
+
+            if (email === 'admin@mamas-table.com' && pass === 'admin123') {
                 document.getElementById('adminLoginScreen').style.display = 'none';
                 document.getElementById('adminDashboardScreen').style.display = 'block';
-                loadAdminFormValues();
+                loadAdminData();
             } else {
-                alert("Mot de passe incorrect!");
+                alert("Identifiants incorrects !");
             }
         }
 
         function logoutAdmin() {
-            document.getElementById('adminDashboardScreen').style.display = 'none';
             document.getElementById('adminLoginScreen').style.display = 'block';
+            document.getElementById('adminDashboardScreen').style.display = 'none';
         }
 
         function showAdminTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-            document.querySelectorAll('.admin-menu li').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.admin-menu li').forEach(el => el.classList.remove('active'));
+
             document.getElementById(tabId).style.display = 'block';
             event.currentTarget.classList.add('active');
         }
 
-        function loadAdminFormValues() {
+        function loadAdminData() {
             document.getElementById('admSiteName').value = appData.general.siteName;
             document.getElementById('admLogo').value = appData.general.logo;
             document.getElementById('admWhatsapp').value = appData.general.whatsapp;
@@ -2466,9 +2492,9 @@
             document.getElementById('admTiktok').value = appData.general.tiktok;
 
             document.getElementById('admHeroTitle').value = appData.hero.title;
-            document.getElementById('admHeroTitleAr').value = appData.hero.titleAr || "";
+            document.getElementById('admHeroTitleAr').value = appData.hero.titleAr || '';
             document.getElementById('admHeroDesc').value = appData.hero.desc;
-            document.getElementById('admHeroDescAr').value = appData.hero.descAr || "";
+            document.getElementById('admHeroDescAr').value = appData.hero.descAr || '';
             document.getElementById('admHeroImg').value = appData.hero.img;
 
             renderAdminSlides();
@@ -2492,8 +2518,9 @@
             appData.general.facebook = document.getElementById('admFb').value;
             appData.general.instagram = document.getElementById('admInsta').value;
             appData.general.tiktok = document.getElementById('admTiktok').value;
+
             saveData();
-            alert("Enregistré !");
+            alert("Paramètres enregistrés !");
         }
 
         function saveHeroSettings() {
@@ -2502,8 +2529,9 @@
             appData.hero.desc = document.getElementById('admHeroDesc').value;
             appData.hero.descAr = document.getElementById('admHeroDescAr').value;
             appData.hero.img = document.getElementById('admHeroImg').value;
+
             saveData();
-            alert("Enregistré !");
+            alert("Hero section enregistrée !");
         }
 
         function addSlide() {
@@ -2512,7 +2540,7 @@
             const img = document.getElementById('slideImg').value;
 
             if (!title || !img) {
-                alert("Veuillez remplir le titre et l'image");
+                alert("Veuillez remplir au moins le titre et l'image.");
                 return;
             }
 
@@ -2525,16 +2553,18 @@
         }
 
         function renderAdminSlides() {
-            const tbody = document.getElementById('admSlidesList');
-            tbody.innerHTML = '';
-            appData.slides.forEach((s, idx) => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><img src="${s.img}" style="width:50px; height:35px; object-fit:cover; border-radius:4px;"></td>
-                        <td>${s.title}</td>
-                        <td><button class="btn btn-danger btn-sm" onclick="deleteSlide(${idx})">Supprimer</button></td>
-                    </tr>
+            const list = document.getElementById('admSlidesList');
+            list.innerHTML = '';
+            appData.slides.forEach((slide, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${slide.img}" style="width:50px; height:50px; object-fit:cover; border-radius:6px;"></td>
+                    <td>${slide.title}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSlide(${idx})">Supprimer</button>
+                    </td>
                 `;
+                list.appendChild(tr);
             });
         }
 
@@ -2547,54 +2577,66 @@
         function renderAdminOffers() {
             const container = document.getElementById('admOffersContainer');
             container.innerHTML = '';
-            appData.offers.forEach((off, idx) => {
-                container.innerHTML += `
-                    <div style="border: 1px dashed #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
-                        <h5>Offre ${idx + 1}</h5>
-                        <div class="form-group"><label>Titre</label><input type="text" id="offT_${idx}" value="${off.title}"></div>
-                        <div class="form-group"><label>Description</label><input type="text" id="offD_${idx}" value="${off.desc}"></div>
-                        <div class="form-group"><label>Prix (DH)</label><input type="number" id="offP_${idx}" value="${off.price}"></div>
-                        <div class="form-group"><label>Ancien Prix (DH)</label><input type="number" id="offOP_${idx}" value="${off.oldPrice}"></div>
-                        <div class="form-group"><label>Badge</label><input type="text" id="offB_${idx}" value="${off.badge}"></div>
-                        <div class="form-group"><label>Image</label><input type="text" id="offI_${idx}" value="${off.img}"></div>
+
+            appData.offers.forEach((offer, idx) => {
+                const div = document.createElement('div');
+                div.style.border = '1px solid #ddd';
+                div.style.padding = '15px';
+                div.style.borderRadius = '8px';
+                div.style.marginBottom = '15px';
+                div.innerHTML = `
+                    <h5>Offre ${idx + 1}</h5>
+                    <div class="form-group"><label>Titre</label><input type="text" id="offTitle_${idx}" value="${offer.title}"></div>
+                    <div class="form-group"><label>Description</label><input type="text" id="offDesc_${idx}" value="${offer.desc}"></div>
+                    <div class="form-group"><label>Prix (DH)</label><input type="number" id="offPrice_${idx}" value="${offer.price}"></div>
+                    <div class="form-group"><label>Ancien Prix (DH)</label><input type="number" id="offOldPrice_${idx}" value="${offer.oldPrice || ''}"></div>
+                    <div class="form-group"><label>Badge</label><input type="text" id="offBadge_${idx}" value="${offer.badge || ''}"></div>
+                    <div class="form-group"><label>URL / Upload Image</label>
+                        <div class="file-upload-box">
+                            <input type="text" id="offImg_${idx}" value="${offer.img}">
+                            <input type="file" accept="image/*" onchange="uploadImageFile(event, 'offImg_${idx}')">
+                        </div>
                     </div>
                 `;
+                container.appendChild(div);
             });
         }
 
         function saveOffersSettings() {
-            appData.offers.forEach((off, idx) => {
-                off.title = document.getElementById(`offT_${idx}`).value;
-                off.desc = document.getElementById(`offD_${idx}`).value;
-                off.price = parseFloat(document.getElementById(`offP_${idx}`).value);
-                off.oldPrice = parseFloat(document.getElementById(`offOP_${idx}`).value);
-                off.badge = document.getElementById(`offB_${idx}`).value;
-                off.img = document.getElementById(`offI_${idx}`).value;
+            appData.offers.forEach((offer, idx) => {
+                offer.title = document.getElementById(`offTitle_${idx}`).value;
+                offer.desc = document.getElementById(`offDesc_${idx}`).value;
+                offer.price = parseFloat(document.getElementById(`offPrice_${idx}`).value) || 0;
+                offer.oldPrice = parseFloat(document.getElementById(`offOldPrice_${idx}`).value) || null;
+                offer.badge = document.getElementById(`offBadge_${idx}`).value;
+                offer.img = document.getElementById(`offImg_${idx}`).value;
             });
+
             saveData();
             alert("Offres enregistrées !");
         }
 
+        function renderAdminCategories() {
+            const list = document.getElementById('admCatList');
+            list.innerHTML = '';
+            appData.categories.forEach((cat, idx) => {
+                if (cat !== 'Tous') {
+                    const li = document.createElement('li');
+                    li.style.marginBottom = '8px';
+                    li.innerHTML = `${cat} <button class="btn btn-danger btn-sm" style="margin-left:10px;" onclick="deleteCategory(${idx})">Supprimer</button>`;
+                    list.appendChild(li);
+                }
+            });
+        }
+
         function addCategory() {
-            const cat = document.getElementById('catNameInput').value.trim();
-            if (cat && !appData.categories.includes(cat)) {
-                appData.categories.push(cat);
+            const val = document.getElementById('catNameInput').value.trim();
+            if (val && !appData.categories.includes(val)) {
+                appData.categories.push(val);
                 saveData();
                 renderAdminCategories();
                 document.getElementById('catNameInput').value = '';
             }
-        }
-
-        function renderAdminCategories() {
-            const ul = document.getElementById('admCatList');
-            ul.innerHTML = '';
-            appData.categories.forEach((c, idx) => {
-                ul.innerHTML += `
-                    <li style="margin-bottom: 5px;">
-                        ${c} ${c !== 'Tous' ? `<button class="btn btn-danger btn-sm" style="margin-left:10px;" onclick="deleteCategory(${idx})">x</button>` : ''}
-                    </li>
-                `;
-            });
         }
 
         function deleteCategory(idx) {
@@ -2604,73 +2646,65 @@
         }
 
         function renderAdminProducts() {
-            const selectCat = document.getElementById('pCat');
-            selectCat.innerHTML = '';
-            appData.categories.forEach(c => {
-                if (c !== 'Tous') selectCat.innerHTML += `<option value="${c}">${c}</option>`;
+            const catSelect = document.getElementById('pCat');
+            catSelect.innerHTML = '';
+            appData.categories.filter(c => c !== 'Tous').forEach(c => {
+                catSelect.innerHTML += `<option value="${c}">${c}</option>`;
             });
 
-            const tbody = document.getElementById('admProductsList');
-            tbody.innerHTML = '';
+            const list = document.getElementById('admProductsList');
+            list.innerHTML = '';
             appData.products.forEach((p, idx) => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><img src="${p.img}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;"></td>
-                        <td>${p.nom}</td>
-                        <td>${p.prix} DH</td>
-                        <td>${p.cat}</td>
-                        <td>${p.allowedInPack ? 'Oui (نعم)' : 'Non (لا)'}</td>
-                        <td class="action-btns">
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${p.img}" style="width:50px; height:50px; object-fit:cover; border-radius:6px;"></td>
+                    <td>${p.nom}</td>
+                    <td>${p.prix} DH</td>
+                    <td>${p.cat}</td>
+                    <td>${p.allowedInPack ? '<span style="color:green; font-weight:bold;">Oui</span>' : 'Non'}</td>
+                    <td>
+                        <div class="action-btns">
                             <button class="btn btn-warning btn-sm" onclick="editProduct(${idx})">Éditer</button>
                             <button class="btn btn-danger btn-sm" onclick="deleteProduct(${idx})">Supprimer</button>
-                        </td>
-                    </tr>
+                        </div>
+                    </td>
                 `;
+                list.appendChild(tr);
             });
         }
 
         function saveProductForm() {
-            const editIdx = parseInt(document.getElementById('prodEditIndex').value);
+            const index = parseInt(document.getElementById('prodEditIndex').value);
             const nom = document.getElementById('pNom').value;
             const img = document.getElementById('pImg').value;
             const desc = document.getElementById('pDesc').value;
-            const prix = parseFloat(document.getElementById('pPrix').value);
+            const prix = parseFloat(document.getElementById('pPrix').value) || 0;
             const ancienPrix = parseFloat(document.getElementById('pAncienPrix').value) || null;
             const cat = document.getElementById('pCat').value;
             const badge = document.getElementById('pBadge').value;
             const allowedInPack = document.getElementById('pAllowedInPack').checked;
 
-            if (!nom || isNaN(prix)) {
-                alert("Veuillez remplir le nom et le prix.");
+            if (!nom || !prix) {
+                alert("Le nom et le prix sont obligatoires.");
                 return;
             }
 
-            const pObj = { nom, img, desc, prix, ancienPrix, cat, badge, allowedInPack };
+            const prodObj = { nom, img, desc, prix, ancienPrix, cat, badge, allowedInPack };
 
-            if (editIdx === -1) {
-                appData.products.push(pObj);
+            if (index === -1) {
+                appData.products.push(prodObj);
             } else {
-                appData.products[editIdx] = pObj;
-                document.getElementById('prodEditIndex').value = "-1";
-                document.getElementById('prodFormTitle').innerText = "Ajouter un Produit";
+                appData.products[index] = prodObj;
             }
 
             saveData();
+            resetProductForm();
             renderAdminProducts();
-
-            document.getElementById('pNom').value = '';
-            document.getElementById('pImg').value = '';
-            document.getElementById('pDesc').value = '';
-            document.getElementById('pPrix').value = '';
-            document.getElementById('pAncienPrix').value = '';
-            document.getElementById('pBadge').value = '';
-            document.getElementById('pAllowedInPack').checked = false;
         }
 
         function editProduct(idx) {
             const p = appData.products[idx];
             document.getElementById('prodEditIndex').value = idx;
-            document.getElementById('prodFormTitle').innerText = "Modifier Produit: " + p.nom;
             document.getElementById('pNom').value = p.nom;
             document.getElementById('pImg').value = p.img;
             document.getElementById('pDesc').value = p.desc;
@@ -2678,7 +2712,9 @@
             document.getElementById('pAncienPrix').value = p.ancienPrix || '';
             document.getElementById('pCat').value = p.cat;
             document.getElementById('pBadge').value = p.badge || '';
-            document.getElementById('pAllowedInPack').checked = !!p.allowedInPack;
+            document.getElementById('pAllowedInPack').checked = p.allowedInPack || false;
+
+            document.getElementById('prodFormTitle').innerText = "Modifier le Produit";
         }
 
         function deleteProduct(idx) {
@@ -2687,20 +2723,35 @@
             renderAdminProducts();
         }
 
+        function resetProductForm() {
+            document.getElementById('prodEditIndex').value = "-1";
+            document.getElementById('pNom').value = '';
+            document.getElementById('pImg').value = '';
+            document.getElementById('pDesc').value = '';
+            document.getElementById('pPrix').value = '';
+            document.getElementById('pAncienPrix').value = '';
+            document.getElementById('pBadge').value = '';
+            document.getElementById('pAllowedInPack').checked = false;
+            document.getElementById('prodFormTitle').innerText = "Ajouter un Produit";
+        }
+
         function saveAboutSettings() {
             appData.about.title = document.getElementById('admAboutTitle').value;
             appData.about.story = document.getElementById('admAboutStory').value;
             appData.about.img = document.getElementById('admAboutImg').value;
+
             saveData();
-            alert("À propos enregistré !");
+            alert("Section À propos enregistrée !");
         }
 
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "mamas_table_backup.json");
-            dlAnchorElem.click();
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `mamas_table_data_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
         }
 
         function importData(event) {
@@ -2709,9 +2760,10 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
-                        appData = JSON.parse(e.target.result);
+                        const parsed = JSON.parse(e.target.result);
+                        appData = parsed;
                         saveData();
-                        loadAdminFormValues();
+                        loadAdminData();
                         alert("Données importées avec succès !");
                     } catch (err) {
                         alert("Fichier JSON invalide !");
@@ -2722,11 +2774,11 @@
         }
 
         function resetWebsiteData() {
-            if (confirm("Voulez-vous vraiment réinitialiser toutes les données aux valeurs par défaut ?")) {
-                appData = JSON.parse(JSON.stringify(initialData));
+            if (confirm("Êtes-vous sûr de vouloir réinitialiser toutes les données aux valeurs par défaut ?")) {
+                appData = initialData;
                 saveData();
-                loadAdminFormValues();
-                alert("Site réinitialisé !");
+                loadAdminData();
+                alert("Le site a été réinitialisé !");
             }
         }
     </script>
