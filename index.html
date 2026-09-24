@@ -32,7 +32,7 @@
 </head>
 <body class="bg-brandCream text-brandDark min-h-screen flex flex-col justify-between selection:bg-brandYellow selection:text-brandDark">
 
-    <!-- Splash Screen (شاشة التحميل الأولية لمدة 5 ثواني) -->
+    <!-- Splash Screen (شاشة التحميل الأولية لمدة 5 ثواني مع اللوغو وسط الشاشة) -->
     <div id="splashScreen" class="fixed inset-0 bg-brandCream z-[9999] flex flex-col items-center justify-center transition-opacity duration-700">
         <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-brandYellow shadow-2xl bg-white p-2 mb-6 animate-pulse flex items-center justify-center">
             <img id="splashLogoImg" src="images/logo.png" alt="Mama's Table Logo" class="w-full h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=300&q=80'">
@@ -134,7 +134,7 @@
                         <h2 class="text-2xl font-black text-brandDark flex items-center gap-2">
                             <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم المتكاملة
                         </h2>
-                        <p class="text-sm text-gray-500">مرحباً Mouna، البيانات تُحفظ وتتحدث تلقائياً على GitHub</p>
+                        <p class="text-sm text-gray-500">مرحباً Mouna، يمكنك التحكم بمتجرك بكامل الصلاحيات</p>
                     </div>
                     <div class="flex gap-2 flex-wrap items-center">
                         <button onclick="switchAdminSubTab('products')" id="subTabProdBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow">المنتجات</button>
@@ -444,32 +444,29 @@
         const ghBranch = "main";
         const ghToken = "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";
 
-        let products = [];
-        let sliders = [];
-        let orders = [];
-        let logoUrl = "images/logo.png";
+        let products = JSON.parse(localStorage.getItem('mamas_products')) || [];
+        let sliders = JSON.parse(localStorage.getItem('mamas_sliders')) || [];
+        let orders = JSON.parse(localStorage.getItem('mamas_orders')) || [];
+        let logoUrl = localStorage.getItem('mamas_logo') || "images/logo.png";
         
-        let footerData = {
+        let footerData = JSON.parse(localStorage.getItem('mamas_footer_data')) || {
             line1: "جميع الحقوق محفوظة © 2026 Mama's Table",
             line2: "التوصيل في القنيطرة",
             line3: "الهاتف: 0600000000"
         };
         
-        let promoSettings = {
+        let promoSettings = JSON.parse(localStorage.getItem('mamas_promo')) || {
             title: "عرض خاص: 3 مأكولات بـ 200 درهم فقط!",
             desc: "اختر أطباقك المفضلة واستمتع بتجربة ذوق رفيع لا تُقاوم."
         };
 
-        let promoSlots = [null, null, null];
+        let promoSlots = JSON.parse(localStorage.getItem('mamas_promo_slots')) || [null, null, null];
         let activeSlotIndex = null;
         let cart = [];
         let currentSlideIndex = 0;
         let slideInterval;
 
-        window.onload = async function() {
-            // جلب البيانات مباشرة من GitHub لتظهر في جميع الأجهزة
-            await loadDataFromGithub();
-
+        window.onload = function() {
             // إخفاء شاشة التحميل بعد 5 ثواني
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
@@ -501,66 +498,6 @@
             startSliderAutoPlay();
         };
 
-        // دالة لجلب البيانات من ملفات JSON على GitHub
-        async function loadDataFromGithub() {
-            try {
-                const res = await fetch(`https://raw.githubusercontent.com/${ghUser}/${ghRepo}/${ghBranch}/data.json?t=${Date.now()}`);
-                if(res.ok) {
-                    const data = await res.json();
-                    if(data.products) products = data.products;
-                    if(data.sliders) sliders = data.sliders;
-                    if(data.orders) orders = data.orders;
-                    if(data.logoUrl) logoUrl = data.logoUrl;
-                    if(data.footerData) footerData = data.footerData;
-                    if(data.promoSettings) promoSettings = data.promoSettings;
-                    if(data.promoSlots) promoSlots = data.promoSlots;
-                }
-            } catch(e) {
-                // في حال عدم وجود الملف بعد، نقرأ من localStorage كبديل مؤقت
-                products = JSON.parse(localStorage.getItem('mamas_products')) || [];
-                sliders = JSON.parse(localStorage.getItem('mamas_sliders')) || [];
-                orders = JSON.parse(localStorage.getItem('mamas_orders')) || [];
-                logoUrl = localStorage.getItem('mamas_logo') || "images/logo.png";
-                footerData = JSON.parse(localStorage.getItem('mamas_footer_data')) || footerData;
-                promoSettings = JSON.parse(localStorage.getItem('mamas_promo')) || promoSettings;
-                promoSlots = JSON.parse(localStorage.getItem('mamas_promo_slots')) || [null, null, null];
-            }
-        }
-
-        // دالة لحفظ جميع البيانات ورفعها إلى ملف data.json على GitHub لتظهر في كل الأجهزة
-        async function saveAllDataToGithub() {
-            const allData = {
-                products, sliders, orders, logoUrl, footerData, promoSettings, promoSlots
-            };
-            const jsonString = JSON.stringify(allData, null, 2);
-            const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
-            const filePath = "data.json";
-            const apiUrl = `https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${filePath}`;
-
-            let fileSha = null;
-            try {
-                const checkRes = await fetch(apiUrl, {
-                    method: 'GET',
-                    headers: { 'Authorization': `token ${ghToken}`, 'Accept': 'application/vnd.github.v3+json' }
-                });
-                if(checkRes.ok) {
-                    const fileData = await checkRes.json();
-                    fileSha = fileData.sha;
-                }
-            } catch(e) {}
-
-            const requestBody = { message: "Update database via Mama's Table Admin", content: base64Content, branch: ghBranch };
-            if(fileSha) requestBody.sha = fileSha;
-
-            try {
-                await fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
-                    body: JSON.stringify(requestBody)
-                });
-            } catch(err) {}
-        }
-
         function applyLogoToAll() {
             document.getElementById('headerLogoImg').src = logoUrl;
             document.getElementById('footerLogoImg').src = logoUrl;
@@ -574,7 +511,7 @@
             document.getElementById('fText3').innerText = footerData.line3;
         }
 
-        // الرفع المباشر لـ GitHub API لمجلد images
+        // الرفع المباشر لصور المنتجات والسلايدر واللوغو إلى GitHub في مجلد images
         window.uploadImageToGithub = async function(event, targetInputId, type) {
             const file = event.target.files[0];
             if (!file) return;
@@ -760,11 +697,11 @@
             document.getElementById('foodSelectModal').classList.add('hidden');
         }
 
-        window.selectFoodForPromo = async function(productId) {
+        window.selectFoodForPromo = function(productId) {
             const p = products.find(item => item.id === productId);
             if(p && activeSlotIndex !== null) {
                 promoSlots[activeSlotIndex] = p;
-                await saveAllDataToGithub();
+                localStorage.setItem('mamas_promo_slots', JSON.stringify(promoSlots));
                 renderPromoSlots();
                 closeFoodSelectModal();
                 alert('تم تحديد مأكولات العرض بنجاح!');
@@ -792,22 +729,22 @@
             alert('تمت إضافة العرض المتكامل (3 مأكولات بـ 200 د.م) إلى السلة بنجاح!');
         }
 
-        window.savePromoSettings = async function(e) {
+        window.savePromoSettings = function(e) {
             e.preventDefault();
             promoSettings.title = document.getElementById('promoTitleInput').value;
             promoSettings.desc = document.getElementById('promoDescInput').value;
-            await saveAllDataToGithub();
+            localStorage.setItem('mamas_promo', JSON.stringify(promoSettings));
             document.getElementById('promoTitleDisplay').innerText = promoSettings.title;
             document.getElementById('promoDescDisplay').innerText = promoSettings.desc;
             alert('تم حفظ إعدادات العرض بنجاح!');
         }
 
-        window.saveFooterSettings = async function(e) {
+        window.saveFooterSettings = function(e) {
             e.preventDefault();
             footerData.line1 = document.getElementById('fLine1').value;
             footerData.line2 = document.getElementById('fLine2').value;
             footerData.line3 = document.getElementById('fLine3').value;
-            await saveAllDataToGithub();
+            localStorage.setItem('mamas_footer_data', JSON.stringify(footerData));
             applyFooterData();
             alert('تم حفظ بيانات الفوتر بنجاح!');
         }
@@ -917,7 +854,7 @@
             `).join('');
         }
 
-        window.saveProduct = async function(e) {
+        window.saveProduct = function(e) {
             e.preventDefault();
             const id = document.getElementById('productId').value;
             const name = document.getElementById('pName').value;
@@ -933,11 +870,11 @@
                 products.push({ id: Date.now().toString(), name, price, category, image, desc, allowPromo });
             }
 
-            await saveAllDataToGithub();
+            localStorage.setItem('mamas_products', JSON.stringify(products));
             resetProductForm();
             renderStoreProducts();
             renderAdminTable();
-            alert('تم حفظ ونشر المنتج بنجاح وأصبح ظاهراً في جميع الأجهزة!');
+            alert('تم حفظ ونشر المنتج بنجاح ولن يختفي عند تحديث الصفحة!');
         }
 
         window.editProduct = function(id) {
@@ -953,10 +890,10 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        window.deleteProductItem = async function(id) {
+        window.deleteProductItem = function(id) {
             if(confirm('هل أنت متأكد من حذف هذا العنصر؟')) {
                 products = products.filter(item => item.id !== id);
-                await saveAllDataToGithub();
+                localStorage.setItem('mamas_products', JSON.stringify(products));
                 renderStoreProducts();
                 renderAdminTable();
             }
@@ -986,7 +923,7 @@
             `).join('');
         }
 
-        window.saveSlider = async function(e) {
+        window.saveSlider = function(e) {
             e.preventDefault();
             const title = document.getElementById('sTitle').value;
             const subtitle = document.getElementById('sSubtitle').value;
@@ -995,17 +932,17 @@
             if(!image) { alert('المرجو إدخال رابط أو اختيار صورة للسلايدر!'); return; }
 
             sliders.push({ id: Date.now().toString(), title, subtitle, image });
-            await saveAllDataToGithub();
+            localStorage.setItem('mamas_sliders', JSON.stringify(sliders));
             document.getElementById('sliderForm').reset();
             renderSlider();
             renderAdminSliders();
-            alert('تمت إضافة السلايدر ونشره في جميع الأجهزة!');
+            alert('تمت إضافة السلايدر ونشره بنجاح!');
         }
 
-        window.deleteSlider = async function(id) {
+        window.deleteSlider = function(id) {
             if(confirm('حذف هذه الصورة من السلايدر؟')) {
                 sliders = sliders.filter(s => s.id !== id);
-                await saveAllDataToGithub();
+                localStorage.setItem('mamas_sliders', JSON.stringify(sliders));
                 renderSlider();
                 renderAdminSliders();
             }
@@ -1032,22 +969,22 @@
             `).join('');
         }
 
-        window.deleteOrder = async function(id) {
+        window.deleteOrder = function(id) {
             if(confirm('حذف هذا الطلب؟')) {
                 orders = orders.filter(o => o.id !== id);
-                await saveAllDataToGithub();
+                localStorage.setItem('mamas_orders', JSON.stringify(orders));
                 renderAdminOrders();
             }
         }
 
-        window.saveLogo = async function(e) {
+        window.saveLogo = function(e) {
             e.preventDefault();
             const url = document.getElementById('logoUrlInput').value;
             if(!url) { alert('المرجو اختيار صورة اللوغو أولاً!'); return; }
             logoUrl = url;
-            await saveAllDataToGithub();
+            localStorage.setItem('mamas_logo', logoUrl);
             applyLogoToAll();
-            alert('تم تحديث شعار المتجر في جميع الأجهزة بنجاح!');
+            alert('تم تحديث شعار المتجر بنجاح!');
         }
 
         window.addToCart = function(id) {
@@ -1122,7 +1059,7 @@
 
         window.closeProductModal = function() { document.getElementById('productModal').classList.add('hidden'); }
 
-        window.checkoutWhatsApp = async function() {
+        window.checkoutWhatsApp = function() {
             if(cart.length === 0) { alert('سلة المشتريات فارغة!'); return; }
             const name = document.getElementById('clientName').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
@@ -1145,7 +1082,7 @@
                 name, phone, address, itemsSummary: summaryText, total
             };
             orders.unshift(newOrder);
-            await saveAllDataToGithub();
+            localStorage.setItem('mamas_orders', JSON.stringify(orders));
             renderAdminOrders();
 
             let msg = `*طلب جديد من متجر Mama's Table*%0A%0A`;
