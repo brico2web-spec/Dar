@@ -37,7 +37,7 @@
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <!-- Logo & Title -->
             <div class="flex items-center space-x-3 space-x-reverse cursor-pointer group" onclick="switchTab('store')">
-                <div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-brandYellow shadow-md flex items-center justify-center bg-amber-50 group-hover:scale-105 transition p-1">
+                <div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-brandYellow shadow-md flex items-center justify-center bg-white group-hover:scale-105 transition p-0.5">
                     <img id="headerLogoImg" src="images/logo.png" alt="Mama's Table Logo" class="w-full h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=300&q=80'">
                 </div>
                 <div>
@@ -46,11 +46,8 @@
                 </div>
             </div>
 
-            <!-- Navigation Buttons (Without Lock Button) -->
+            <!-- Navigation Buttons (Red store button removed) -->
             <div class="flex items-center space-x-2 space-x-reverse">
-                <button onclick="switchTab('store')" id="btnStore" class="px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-brandRed text-white shadow-md transition flex items-center gap-2">
-                    <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">المتجر</span>
-                </button>
                 <button onclick="openCartModal()" class="relative px-3.5 py-2 rounded-xl text-sm font-bold bg-amber-100 text-amber-900 hover:bg-amber-200 transition flex items-center gap-1.5 shadow-sm">
                     <i class="fa-solid fa-shopping-cart text-lg"></i>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-brandRed text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-black">0</span>
@@ -97,7 +94,7 @@
                 </div>
             </div>
 
-            <!-- Categories Filter Bar (Search Removed) -->
+            <!-- Categories Filter Bar -->
             <div class="flex items-center justify-between mb-8 flex-wrap gap-4 border-b border-gray-200 pb-4">
                 <div class="flex items-center gap-3">
                     <h3 id="productsSection" class="text-2xl font-black text-brandDark flex items-center gap-2">
@@ -108,7 +105,7 @@
                     <select id="categoryFilter" onchange="filterProducts()" class="bg-white px-4 py-2.5 rounded-2xl shadow-sm border border-gray-200 text-sm font-bold text-brandDark outline-none cursor-pointer">
                         <option value="all">جميع الاقسام</option>
                         <option value="food">مأكولات وأطباق</option>
-                        <option value="kitchen">أواني وأدوات المطبخ</option>
+                        <option value="kitchen">لانشبوكس للأطفال</option>
                     </select>
                 </div>
             </div>
@@ -125,16 +122,16 @@
                         <h2 class="text-2xl font-black text-brandDark flex items-center gap-2">
                             <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم المتكاملة
                         </h2>
-                        <p class="text-sm text-gray-500">إدارة المنتجات، السلايدر، العروض، الطلبات، والفوتر بسهولة تامة</p>
+                        <p class="text-sm text-gray-500">مرحباً Mouna، يمكنك التحكم بمتجرك بكامل الصلاحيات</p>
                     </div>
-                    <div class="flex gap-2 flex-wrap">
+                    <div class="flex gap-2 flex-wrap items-center">
                         <button onclick="switchAdminSubTab('products')" id="subTabProdBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow">المنتجات</button>
                         <button onclick="switchAdminSubTab('sliders')" id="subTabSlideBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">السلايدر</button>
                         <button onclick="switchAdminSubTab('promo')" id="subTabPromoBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">العرض (3 بـ200)</button>
                         <button onclick="switchAdminSubTab('orders')" id="subTabOrdersBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">الطلبات الواردة</button>
                         <button onclick="switchAdminSubTab('logo')" id="subTabLogoBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">اللوغو</button>
                         <button onclick="switchAdminSubTab('footer')" id="subTabFooterBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">الفوتر</button>
-                        <button onclick="switchTab('store')" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-200 text-gray-800">إغلاق الإدارة</button>
+                        <button onclick="switchTab('store')" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-200 text-gray-800 hover:bg-gray-300 mr-2">خروج</button>
                     </div>
                 </div>
 
@@ -159,7 +156,7 @@
                                 <label class="block text-xs font-bold text-gray-700 mb-1">القسم</label>
                                 <select id="pCategory" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-bold">
                                     <option value="food">مأكولات وأطباق</option>
-                                    <option value="kitchen">أواني وأدوات المطبخ</option>
+                                    <option value="kitchen">لانشبوكس للأطفال</option>
                                 </select>
                             </div>
                         </div>
@@ -176,6 +173,10 @@
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-gray-700 mb-1">وصف المأكولات / المكونات أو التفاصيل</label>
                             <textarea id="pDesc" rows="2" required placeholder="مكونات الطبق أو مميزات المنتج..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm"></textarea>
+                        </div>
+                        <div class="mb-4 flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200">
+                            <input type="checkbox" id="pAllowPromo" class="w-4 h-4 accent-brandRed cursor-pointer">
+                            <label for="pAllowPromo" class="text-xs font-bold text-gray-700 cursor-pointer">السماح بظهور هذا المنتج في خانات عرض (3 مأكولات بـ 200 د.م)</label>
                         </div>
                         <div class="flex justify-end gap-3">
                             <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">حفظ ونشر على المتجر</button>
@@ -230,7 +231,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="adminSlidersGrid"></div>
                 </div>
 
-                <!-- Promo Management Section -->
+                <!-- Promo Management Section (3 for 200 DH) -->
                 <div id="adminPromoSection" class="hidden">
                     <h3 class="text-lg font-black text-brandDark mb-4">تعديل عبارات وإعدادات عرض (3 مأكولات بـ 200 درهم)</h3>
                     <form id="promoForm" onsubmit="savePromoSettings(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-6">
@@ -290,7 +291,7 @@
                     <h3 class="text-lg font-black text-brandDark mb-4">تعديل معلومات الفوتر (Footer)</h3>
                     <form id="footerForm" onsubmit="saveFooterSettings(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8 max-w-xl">
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">نص حقوق الملكية / وصف الفوتر</label>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">معلومات الفوتر</label>
                             <input type="text" id="footerTextInput" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                         </div>
                         <div class="flex justify-end">
@@ -304,56 +305,67 @@
 
     </main>
 
-    <!-- Modal for Selecting Promo Food Items -->
-    <div id="foodSelectModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[80vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-                <h3 class="text-xl font-black text-brandDark flex items-center gap-2">
-                    <i class="fa-solid fa-utensils text-brandRed"></i> اختر مأكولات العرض المتاحة
-                </h3>
-                <button onclick="closeFoodSelectModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-xmark"></i>
+    <!-- Modern Styled Modal for Admin Login (Mouna - 14634) -->
+    <div id="adminLoginModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-md transition-all duration-300">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative border border-gray-100 transform scale-100">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-gray-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-2xl bg-brandRed/10 text-brandRed flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-lock text-sm"></i>
+                    </div>
+                    <h3 class="text-base font-black text-brandDark">تسجيل دخول المشرفة</h3>
+                </div>
+                <button onclick="closeAdminLoginModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
-            <p class="text-xs text-gray-500 mb-4">حدد المأكولات التي تود أن تظهر للزبناء عند اختيار هذا الخانة في العرض:</p>
-            <div id="foodSelectList" class="space-y-3"></div>
-        </div>
-    </div>
-
-    <!-- Login Modal for Admin Authentication -->
-    <div id="loginModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-                <h3 class="text-lg font-black text-brandDark flex items-center gap-2">
-                    <i class="fa-solid fa-lock text-brandRed"></i> تسجيل دخول المشرفة
-                </h3>
-                <button onclick="closeLoginModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-xmark"></i>
+            <form onsubmit="verifyAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">اسم المستخدم (Username)</label>
+                    <input type="text" id="adminUser" required placeholder="أدخل اسم المستخدم" class="w-full px-4 py-3 rounded-2xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed bg-gray-50 font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">كلمة المرور (Password)</label>
+                    <input type="password" id="adminPass" required placeholder="أدخل كلمة المرور" class="w-full px-4 py-3 rounded-2xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed bg-gray-50 font-semibold">
+                </div>
+                <button type="submit" class="w-full bg-brandRed hover:bg-red-700 text-white font-black py-3.5 rounded-2xl shadow-lg shadow-brandRed/20 transition duration-300">
+                    دخول لوحة الإدارة
                 </button>
-            </div>
-            <form onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">اسم المستخدم (Username)</label>
-                    <input type="text" id="loginUser" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm bg-white">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">كلمة المرور (Password)</label>
-                    <input type="password" id="loginPass" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm bg-white">
-                </div>
-                <button type="submit" class="w-full bg-brandRed hover:bg-red-700 text-white font-black py-3 rounded-xl shadow transition">دخول لوحة الإدارة</button>
             </form>
         </div>
     </div>
 
-    <!-- Cart Modal -->
-    <div id="cartModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-                <h3 class="text-xl font-black text-brandDark flex items-center gap-2">
-                    <i class="fa-solid fa-shopping-bag text-brandRed"></i> سلة المشتريات
-                </h3>
-                <button onclick="closeCartModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-xmark"></i>
+    <!-- Modern Styled Modal for Selecting Promo Food Items -->
+    <div id="foodSelectModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-md transition-all duration-300">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[80vh] overflow-y-auto border border-gray-100">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-gray-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-2xl bg-brandRed/10 text-brandRed flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-utensils text-sm"></i>
+                    </div>
+                    <h3 class="text-base font-black text-brandDark">اختر مأكولات العرض المتاحة</h3>
+                </div>
+                <button onclick="closeFoodSelectModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <p class="text-xs text-gray-500 mb-4 font-semibold">حدد المأكولات المسموح لها بالظهور في هذا العرض:</p>
+            <div id="foodSelectList" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- Modern Styled Cart Modal -->
+    <div id="cartModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-md transition-all duration-300">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-gray-100">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-gray-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-2xl bg-brandRed/10 text-brandRed flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-shopping-bag text-sm"></i>
+                    </div>
+                    <h3 class="text-base font-black text-brandDark">سلة المشتريات</h3>
+                </div>
+                <button onclick="closeCartModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
             <div id="cartItemsList" class="max-h-60 overflow-y-auto divide-y divide-gray-100 mb-4">
@@ -366,32 +378,38 @@
                 </div>
             </div>
             <div class="space-y-3">
-                <input type="text" id="clientName" placeholder="اسم الزبون الكريم" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed">
-                <input type="tel" id="clientPhone" placeholder="رقم الهاتف للتواصل" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed">
-                <textarea id="clientAddress" placeholder="عنوان التوصيل (المدينة، الحي...)" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed"></textarea>
-                <button onclick="checkoutWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                <input type="text" id="clientName" placeholder="اسم الزبون الكريم" class="w-full px-4 py-3 rounded-2xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed bg-gray-50 font-semibold">
+                <input type="tel" id="clientPhone" placeholder="رقم الهاتف للتواصل" class="w-full px-4 py-3 rounded-2xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed bg-gray-50 font-semibold">
+                <textarea id="clientAddress" placeholder="عنوان التوصيل (المدينة، الحي...)" rows="2" class="w-full px-4 py-3 rounded-2xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed bg-gray-50 font-semibold"></textarea>
+                <button onclick="checkoutWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-3.5 rounded-2xl shadow-lg shadow-green-600/20 transition duration-300 flex items-center justify-center gap-2">
                     <i class="fa-brands fa-whatsapp text-xl"></i> إتمام الطلب عبر واتساب
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Product Details Modal -->
-    <div id="productModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative">
-            <button onclick="closeProductModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold z-10">
-                <i class="fa-solid fa-xmark"></i>
+    <!-- Modern Styled Product Details Modal -->
+    <div id="productModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-md transition-all duration-300">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative border border-gray-100">
+            <button onclick="closeProductModal()" class="absolute top-5 left-5 w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold z-10 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
             </button>
             <div id="productModalContent"></div>
         </div>
     </div>
 
-    <!-- Footer with Admin Button -->
-    <footer class="bg-white border-t border-gray-200 py-6 mt-12 text-center text-xs text-gray-500 font-semibold">
-        <p id="footerTextDisplay" class="mb-2">جميع الحقوق محفوظة © 2026 Mama's Table</p>
-        <button onclick="openLoginModal()" class="text-brandRed font-bold hover:underline bg-red-50 px-3 py-1 rounded-lg border border-red-100 transition inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-user-shield"></i> Admin
-        </button>
+    <!-- Footer with Admin login link & Stacked Layout -->
+    <footer class="bg-white border-t border-gray-200 py-8 mt-12 text-center text-xs text-gray-600 font-semibold">
+        <div class="container mx-auto px-4 flex flex-col items-center justify-center space-y-2">
+            <p>جميع الحقوق محفوظة © 2026 Mama's Table</p>
+            <p>التوصيل في القنيطرة</p>
+            <p>الهاتف: 0600000000</p>
+            <div class="pt-2">
+                <button onclick="openAdminLoginModal()" class="text-brandRed font-black hover:underline cursor-pointer inline-flex items-center gap-1 bg-red-50 px-4 py-2 rounded-xl transition">
+                    <i class="fa-solid fa-lock"></i> Admin
+                </button>
+            </div>
+        </div>
     </footer>
 
     <!-- Script & Logic -->
@@ -420,7 +438,6 @@
 
         window.onload = function() {
             document.getElementById('headerLogoImg').src = logoUrl;
-            document.getElementById('footerTextDisplay').innerText = footerText;
             document.getElementById('promoTitleDisplay').innerText = promoSettings.title;
             document.getElementById('promoDescDisplay').innerText = promoSettings.desc;
             
@@ -495,13 +512,34 @@
             reader.readAsDataURL(file);
         }
 
+        window.openAdminLoginModal = function() {
+            document.getElementById('adminLoginModal').classList.remove('hidden');
+        }
+
+        window.closeAdminLoginModal = function() {
+            document.getElementById('adminLoginModal').classList.add('hidden');
+        }
+
+        window.verifyAdminLogin = function(e) {
+            e.preventDefault();
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPass').value.trim();
+
+            if(u === 'Mouna' && p === '14634') {
+                closeAdminLoginModal();
+                switchTab('admin');
+                document.getElementById('adminUser').value = '';
+                document.getElementById('adminPass').value = '';
+            } else {
+                alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
+            }
+        }
+
         window.switchTab = function(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.getElementById('btnStore').className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition flex items-center gap-2";
 
             if(tab === 'store') {
                 document.getElementById('tabStore').classList.add('active');
-                document.getElementById('btnStore').className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-brandRed text-white shadow-md transition flex items-center gap-2";
                 renderStoreProducts();
                 renderPromoSlots();
                 startSliderAutoPlay();
@@ -511,28 +549,6 @@
                 renderAdminSliders();
                 renderAdminOrders();
                 stopSliderAutoPlay();
-            }
-        }
-
-        window.openLoginModal = function() {
-            document.getElementById('loginModal').classList.remove('hidden');
-        }
-        window.closeLoginModal = function() {
-            document.getElementById('loginModal').classList.add('hidden');
-        }
-
-        window.handleLogin = function(e) {
-            e.preventDefault();
-            const u = document.getElementById('loginUser').value.trim();
-            const p = document.getElementById('loginPass').value.trim();
-
-            if(u === 'Mouna' && p === '14634') {
-                closeLoginModal();
-                switchTab('admin');
-                document.getElementById('loginUser').value = '';
-                document.getElementById('loginPass').value = '';
-            } else {
-                alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
             }
         }
 
@@ -565,13 +581,12 @@
             }
         }
 
-        // Promo Slots Management
         window.renderPromoSlots = function() {
             const container = document.getElementById('promoSlotsContainer');
             container.innerHTML = promoSlots.map((item, index) => {
                 if(item) {
                     return `
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 flex items-center justify-between shadow-lg">
+                        <div class="bg-white/15 backdrop-blur-md rounded-2xl p-4 border border-white/20 flex items-center justify-between shadow-lg">
                             <div class="flex items-center gap-3">
                                 <img src="${item.image}" class="w-14 h-14 rounded-xl object-cover shadow">
                                 <div>
@@ -600,12 +615,12 @@
         window.openFoodSelectModal = function(slotIndex) {
             activeSlotIndex = slotIndex;
             const list = document.getElementById('foodSelectList');
-            const foodProducts = products.filter(p => p.category === 'food');
+            const allowedProducts = products.filter(p => p.allowPromo === true);
 
-            if(foodProducts.length === 0) {
-                list.innerHTML = '<p class="text-center text-gray-400 py-6">لا توجد مأكولات مضافة في القائمة حالياً. أضف مأكولات أولاً.</p>';
+            if(allowedProducts.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-400 py-6">لا توجد مأكولات مفعلة للظهور في العرض حالياً. يرجى تفعيل الخيار من تعديل المنتج في الإدارة.</p>';
             } else {
-                list.innerHTML = foodProducts.map(p => `
+                list.innerHTML = allowedProducts.map(p => `
                     <div onclick="selectFoodForPromo('${p.id}')" class="flex items-center justify-between p-3 rounded-2xl border border-gray-100 hover:bg-amber-50 cursor-pointer transition">
                         <div class="flex items-center gap-3">
                             <img src="${p.image}" class="w-12 h-12 rounded-xl object-cover shadow-sm">
@@ -632,7 +647,7 @@
                 localStorage.setItem('mamas_promo_slots', JSON.stringify(promoSlots));
                 renderPromoSlots();
                 closeFoodSelectModal();
-                alert('تم تحديد المأكولات للعرض بنجاح!');
+                alert('تم تحديد مأكولات العرض بنجاح!');
             }
         }
 
@@ -671,7 +686,6 @@
             e.preventDefault();
             footerText = document.getElementById('footerTextInput').value;
             localStorage.setItem('mamas_footer', footerText);
-            document.getElementById('footerTextDisplay').innerText = footerText;
             alert('تم حفظ بيانات الفوتر بنجاح!');
         }
 
@@ -727,8 +741,7 @@
             const cat = document.getElementById('categoryFilter') ? document.getElementById('categoryFilter').value : 'all';
 
             const filtered = products.filter(p => {
-                const matchCat = cat === 'all' || p.category === cat;
-                return matchCat;
+                return cat === 'all' || p.category === cat;
             });
 
             if(filtered.length === 0) {
@@ -742,7 +755,7 @@
                         <div class="w-full h-52 rounded-2xl overflow-hidden mb-4 bg-gray-50 relative cursor-pointer" onclick="openProductDetail('${p.id}')">
                             <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                             <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-brandDark text-xs font-black px-3 py-1 rounded-full shadow">
-                                ${p.category === 'food' ? '🍲 مأكولات' : '🍳 أواني مطبخ'}
+                                ${p.category === 'food' ? '🍲 مأكولات' : '🎒 لانشبوكس للأطفال'}
                             </span>
                         </div>
                         <h4 class="font-black text-brandDark text-base mb-1 cursor-pointer hover:text-brandRed transition line-clamp-1" onclick="openProductDetail('${p.id}')">${p.name}</h4>
@@ -771,7 +784,7 @@
                 <tr class="hover:bg-gray-50 transition">
                     <td class="p-4"><img src="${p.image}" class="w-12 h-12 rounded-xl object-cover shadow-sm"></td>
                     <td class="p-4 font-bold text-brandDark">${p.name}</td>
-                    <td class="p-4 font-semibold text-gray-600">${p.category === 'food' ? 'مأكولات' : 'أواني مطبخ'}</td>
+                    <td class="p-4 font-semibold text-gray-600">${p.category === 'food' ? 'مأكولات' : 'لانشبوكس للأطفال'}</td>
                     <td class="p-4 font-black text-brandRed">${p.price} د.م</td>
                     <td class="p-4 text-center space-x-2 space-x-reverse">
                         <button onclick="editProduct('${p.id}')" class="bg-amber-100 text-amber-900 p-2 rounded-xl text-xs font-bold hover:bg-amber-200 transition"><i class="fa-solid fa-pen"></i></button>
@@ -789,11 +802,12 @@
             const category = document.getElementById('pCategory').value;
             const image = document.getElementById('pImage').value || 'https://images.unsplash.com/photo-1541533848490-bc814f3524d7?auto=format&fit=crop&w=600&q=80';
             const desc = document.getElementById('pDesc').value;
+            const allowPromo = document.getElementById('pAllowPromo').checked;
 
             if(id) {
-                products = products.map(item => item.id == id ? { id, name, price, category, image, desc } : item);
+                products = products.map(item => item.id == id ? { id, name, price, category, image, desc, allowPromo } : item);
             } else {
-                products.push({ id: Date.now().toString(), name, price, category, image, desc });
+                products.push({ id: Date.now().toString(), name, price, category, image, desc, allowPromo });
             }
 
             localStorage.setItem('mamas_products', JSON.stringify(products));
@@ -812,6 +826,7 @@
             document.getElementById('pCategory').value = p.category;
             document.getElementById('pImage').value = p.image;
             document.getElementById('pDesc').value = p.desc || '';
+            document.getElementById('pAllowPromo').checked = p.allowPromo || false;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -827,6 +842,7 @@
         window.resetProductForm = function() {
             document.getElementById('productForm').reset();
             document.getElementById('productId').value = '';
+            document.getElementById('pAllowPromo').checked = false;
         }
 
         window.renderAdminSliders = function() {
@@ -970,7 +986,7 @@
                 </div>
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="text-xl font-black text-brandDark">${p.name}</h3>
-                    <span class="bg-amber-100 text-brandDark font-bold text-xs px-3 py-1 rounded-full">${p.category === 'food' ? 'مأكولات' : 'أواني مطبخ'}</span>
+                    <span class="bg-amber-100 text-brandDark font-bold text-xs px-3 py-1 rounded-full">${p.category === 'food' ? 'مأكولات' : 'لانشبوكس للأطفال'}</span>
                 </div>
                 <p class="text-brandRed font-black text-2xl mb-3">${p.price} د.م</p>
                 <p class="text-gray-600 text-sm mb-6 leading-relaxed">${p.desc || ''}</p>
