@@ -32,6 +32,18 @@
 </head>
 <body class="bg-brandCream text-brandDark min-h-screen flex flex-col justify-between selection:bg-brandYellow selection:text-brandDark">
 
+    <!-- Splash Screen (شاشة التحميل الأولية لمدة 5 ثواني) -->
+    <div id="splashScreen" class="fixed inset-0 bg-brandCream z-[9999] flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-brandYellow shadow-2xl bg-white p-2 mb-6 animate-pulse flex items-center justify-center">
+            <img id="splashLogoImg" src="images/logo.png" alt="Mama's Table Logo" class="w-full h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=300&q=80'">
+        </div>
+        <h1 class="text-2xl md:text-3xl font-black text-brandRed tracking-wide mb-2">Mama's Table</h1>
+        <p class="text-sm text-gray-600 font-bold">جاري تحضير أشهى المأكولات لأجلك...</p>
+        <div class="w-48 h-1.5 bg-gray-200 rounded-full mt-6 overflow-hidden">
+            <div class="bg-brandRed h-full rounded-full animate-[progress_5s_linear_forwards]" style="width: 100%;"></div>
+        </div>
+    </div>
+
     <!-- Header / Navigation -->
     <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 transition-all duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -46,7 +58,7 @@
                 </div>
             </div>
 
-            <!-- Navigation Buttons (Red store button removed) -->
+            <!-- Navigation Buttons -->
             <div class="flex items-center space-x-2 space-x-reverse">
                 <button onclick="openCartModal()" class="relative px-3.5 py-2 rounded-xl text-sm font-bold bg-amber-100 text-amber-900 hover:bg-amber-200 transition flex items-center gap-1.5 shadow-sm">
                     <i class="fa-solid fa-shopping-cart text-lg"></i>
@@ -290,9 +302,19 @@
                 <div id="adminFooterSection" class="hidden">
                     <h3 class="text-lg font-black text-brandDark mb-4">تعديل معلومات الفوتر (Footer)</h3>
                     <form id="footerForm" onsubmit="saveFooterSettings(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8 max-w-xl">
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">معلومات الفوتر</label>
-                            <input type="text" id="footerTextInput" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
+                        <div class="space-y-4 mb-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">السطر الأول (الحقوق)</label>
+                                <input type="text" id="fLine1" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">السطر الثاني (التوصيل)</label>
+                                <input type="text" id="fLine2" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">السطر الثالث (الهاتف)</label>
+                                <input type="text" id="fLine3" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
+                            </div>
                         </div>
                         <div class="flex justify-end">
                             <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow">حفظ معلومات الفوتر</button>
@@ -398,12 +420,15 @@
         </div>
     </div>
 
-    <!-- Footer with Admin login link & Stacked Layout -->
+    <!-- Footer with Admin login link & Stacked Layout & Logo -->
     <footer class="bg-white border-t border-gray-200 py-8 mt-12 text-center text-xs text-gray-600 font-semibold">
-        <div class="container mx-auto px-4 flex flex-col items-center justify-center space-y-2">
-            <p>جميع الحقوق محفوظة © 2026 Mama's Table</p>
-            <p>التوصيل في القنيطرة</p>
-            <p>الهاتف: 0600000000</p>
+        <div class="container mx-auto px-4 flex flex-col items-center justify-center space-y-3">
+            <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-brandYellow shadow-md flex items-center justify-center bg-white p-0.5 mb-1">
+                <img id="footerLogoImg" src="images/logo.png" alt="Mama's Table Logo" class="w-full h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=300&q=80'">
+            </div>
+            <p id="fText1">جميع الحقوق محفوظة © 2026 Mama's Table</p>
+            <p id="fText2">التوصيل في القنيطرة</p>
+            <p id="fText3">الهاتف: 0600000000</p>
             <div class="pt-2">
                 <button onclick="openAdminLoginModal()" class="text-brandRed font-black hover:underline cursor-pointer inline-flex items-center gap-1 bg-red-50 px-4 py-2 rounded-xl transition">
                     <i class="fa-solid fa-lock"></i> Admin
@@ -423,7 +448,12 @@
         let sliders = JSON.parse(localStorage.getItem('mamas_sliders')) || [];
         let orders = JSON.parse(localStorage.getItem('mamas_orders')) || [];
         let logoUrl = localStorage.getItem('mamas_logo') || "images/logo.png";
-        let footerText = localStorage.getItem('mamas_footer') || "جميع الحقوق محفوظة © 2026 Mama's Table";
+        
+        let footerData = JSON.parse(localStorage.getItem('mamas_footer_data')) || {
+            line1: "جميع الحقوق محفوظة © 2026 Mama's Table",
+            line2: "التوصيل في القنيطرة",
+            line3: "الهاتف: 0600000000"
+        };
         
         let promoSettings = JSON.parse(localStorage.getItem('mamas_promo')) || {
             title: "عرض خاص: 3 مأكولات بـ 200 درهم فقط!",
@@ -437,13 +467,27 @@
         let slideInterval;
 
         window.onload = function() {
-            document.getElementById('headerLogoImg').src = logoUrl;
+            // إخفاء شاشة التحميل بعد 5 ثواني
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if(splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.remove(), 700);
+                }
+            }, 5000);
+
+            applyLogoToAll();
+            applyFooterData();
+
             document.getElementById('promoTitleDisplay').innerText = promoSettings.title;
             document.getElementById('promoDescDisplay').innerText = promoSettings.desc;
             
             document.getElementById('promoTitleInput').value = promoSettings.title;
             document.getElementById('promoDescInput').value = promoSettings.desc;
-            document.getElementById('footerTextInput').value = footerText;
+            
+            document.getElementById('fLine1').value = footerData.line1;
+            document.getElementById('fLine2').value = footerData.line2;
+            document.getElementById('fLine3').value = footerData.line3;
 
             renderStoreProducts();
             renderSlider();
@@ -453,6 +497,19 @@
             renderAdminOrders();
             startSliderAutoPlay();
         };
+
+        function applyLogoToAll() {
+            document.getElementById('headerLogoImg').src = logoUrl;
+            document.getElementById('footerLogoImg').src = logoUrl;
+            const splashLogo = document.getElementById('splashLogoImg');
+            if(splashLogo) splashLogo.src = logoUrl;
+        }
+
+        function applyFooterData() {
+            document.getElementById('fText1').innerText = footerData.line1;
+            document.getElementById('fText2').innerText = footerData.line2;
+            document.getElementById('fText3').innerText = footerData.line3;
+        }
 
         // الرفع المباشر لـ GitHub API لمجلد images
         window.uploadImageToGithub = async function(event, targetInputId, type) {
@@ -684,8 +741,11 @@
 
         window.saveFooterSettings = function(e) {
             e.preventDefault();
-            footerText = document.getElementById('footerTextInput').value;
-            localStorage.setItem('mamas_footer', footerText);
+            footerData.line1 = document.getElementById('fLine1').value;
+            footerData.line2 = document.getElementById('fLine2').value;
+            footerData.line3 = document.getElementById('fLine3').value;
+            localStorage.setItem('mamas_footer_data', JSON.stringify(footerData));
+            applyFooterData();
             alert('تم حفظ بيانات الفوتر بنجاح!');
         }
 
@@ -923,7 +983,7 @@
             if(!url) { alert('المرجو اختيار صورة اللوغو أولاً!'); return; }
             logoUrl = url;
             localStorage.setItem('mamas_logo', logoUrl);
-            document.getElementById('headerLogoImg').src = logoUrl;
+            applyLogoToAll();
             alert('تم تحديث شعار المتجر بنجاح!');
         }
 
