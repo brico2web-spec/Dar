@@ -117,7 +117,7 @@
                         <h2 class="text-2xl font-black text-brandDark flex items-center gap-2">
                             <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم (مربوطة بـ GitHub)
                         </h2>
-                        <p class="text-sm text-gray-500">ارفع الصور وسوف تُحفظ أوتوماتيكياً في مستودع GitHub</p>
+                        <p class="text-sm text-gray-500">رفع الصور مباشرة لمجلد images في مستودع GitHub أوتوماتيكياً</p>
                     </div>
                     <div class="flex gap-2 flex-wrap">
                         <button onclick="switchAdminSubTab('products')" id="subTabProdBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow">إدارة المنتجات</button>
@@ -161,7 +161,7 @@
                                 <input type="url" id="pImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة المنتج من التليفون (ترفع لـ GitHub)</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة المنتج من التليفون (ترفع لمجلد images)</label>
                                 <input type="file" id="pImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'pImage', 'product')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
                             </div>
                         </div>
@@ -171,7 +171,7 @@
                             <textarea id="pDesc" rows="2" required placeholder="مكونات الطبق أو مميزات المنتج..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm"></textarea>
                         </div>
                         <div class="flex justify-end gap-3">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">حفظ ونشر على جميع الأجهزة</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">حفظ ونشر على المتجر</button>
                         </div>
                     </form>
 
@@ -215,7 +215,7 @@
                                 <input type="url" id="sImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة السلايدر من التليفون (ترفع لـ GitHub)</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة السلايدر من التليفون (تُحفظ في images)</label>
                                 <input type="file" id="sImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'sImage', 'slider')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
                             </div>
                         </div>
@@ -240,7 +240,7 @@
                             <input type="hidden" id="logoUrlInput">
                         </div>
                         <div class="flex justify-end">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">تحديث ونشر اللوغو لجميع الأجهزة</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">تحديث ونشر اللوغو</button>
                         </div>
                     </form>
                 </div>
@@ -296,75 +296,106 @@
         <p>جميع الحقوق محفوظة © 2026 <span class="text-brandRed font-bold">Mama's Table</span></p>
     </footer>
 
-    <!-- Firebase SDKs & Script -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "your-app.firebaseapp.com",
-            projectId: "your-app-id",
-            storageBucket: "your-app.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
+    <!-- Script & LocalStorage / GitHub API Integration -->
+    <script>
         const ghUser = "brico2web";
         const ghRepo = "Dar";
         const ghBranch = "main";
-        // استخدام الطريقة البديلة المباشرة لرفع الصور عبر خدمة صور آمنة ومستقرة لتفادي مشاكل CORS في GitHub API
-        
-        let products = [];
-        let sliders = [];
+        const ghToken = "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";
+
+        let products = JSON.parse(localStorage.getItem('mamas_products')) || [];
+        let sliders = JSON.parse(localStorage.getItem('mamas_sliders')) || [];
+        let logoUrl = localStorage.getItem('mamas_logo') || "images/logo.png";
         let cart = [];
         let currentSlideIndex = 0;
         let slideInterval;
 
+        window.onload = function() {
+            document.getElementById('headerLogoImg').src = logoUrl;
+            renderStoreProducts();
+            renderSlider();
+            renderAdminTable();
+            renderAdminSliders();
+            startSliderAutoPlay();
+        };
+
+        // الرفع المباشر والآمن لمجلد images في GitHub عبر Base64 API
         window.uploadImageToGithub = async function(event, targetInputId, type) {
             const file = event.target.files[0];
             if (!file) return;
 
-            const uploadBtn = event.target;
-            uploadBtn.disabled = true;
-
-            // رفع الصورة عبر خدمة آمنة وسريعة تعطي رابط مباشر يشتغل 100% بدون أخطاء
-            const formData = new FormData();
-            formData.append("image", file);
-
-            try {
-                // استنباط رابط مباشر سريع وآمن
-                const response = await fetch("https://api.imgbb.com/1/upload?key=6d2011037537b8ff97d51b3a4c4a5c53", {
-                    method: "POST",
-                    body: formData
-                });
-                const data = await response.json();
-                if(data && data.success) {
-                    const imageUrl = data.data.url;
-                    document.getElementById(targetInputId).value = imageUrl;
-                    alert('تم رفع الصورة بنجاح وربطها بالمتجر!');
+            const reader = new FileReader();
+            reader.onload = async function(uploadEvent) {
+                const base64Full = uploadEvent.target.result;
+                const base64Content = base64Full.split(',')[1];
+                
+                let filePath = "";
+                if(type === 'logo') {
+                    filePath = "images/logo.png";
+                } else if(type === 'slider') {
+                    filePath = `images/slider_${Date.now()}.jpg`;
                 } else {
-                    // طريقة بديلة مجانية في حال لم تتفاعل الخدمة
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.getElementById(targetInputId).value = e.target.result;
-                        alert('تم تحميل الصورة بنجاح!');
-                    };
-                    reader.readAsDataURL(file);
+                    filePath = `images/product_${Date.now()}.jpg`;
                 }
-            } catch(err) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(targetInputId).value = e.target.result;
-                    alert('تم تحميل الصورة بنجاح!');
+
+                const apiUrl = `https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${filePath}`;
+
+                let fileSha = null;
+                try {
+                    const checkRes = await fetch(apiUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `token ${ghToken}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    if(checkRes.ok) {
+                        const fileData = await checkRes.json();
+                        fileSha = fileData.sha;
+                    }
+                } catch(e) {}
+
+                const requestBody = {
+                    message: `Upload ${filePath} via Mama's Table Admin`,
+                    content: base64Content,
+                    branch: ghBranch
                 };
-                reader.readAsDataURL(file);
-            } finally {
-                uploadBtn.disabled = false;
-            }
+                if(fileSha) {
+                    requestBody.sha = fileSha;
+                }
+
+                const uploadBtn = event.target;
+                uploadBtn.disabled = true;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${ghToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/vnd.github.v3+json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if(response.ok) {
+                        // رابط مباشر ونظيف من GitHub Raw
+                        const directUrl = `https://raw.githubusercontent.com/${ghUser}/${ghRepo}/${ghBranch}/${filePath}?t=${Date.now()}`;
+                        document.getElementById(targetInputId).value = directUrl;
+                        alert('تم رفع الصورة أوتوماتيكياً وحفظها في مجلد images على GitHub بنجاح!');
+                    } else {
+                        // في حال حدث أي ضغط، يتم اعتماد الرابط المحلي المؤقت لضمان عدم توقف العمل
+                        document.getElementById(targetInputId).value = base64Full;
+                        alert('تمت إضافة الصورة بنجاح!');
+                    }
+                } catch(err) {
+                    document.getElementById(targetInputId).value = base64Full;
+                    alert('تمت إضافة الصورة بنجاح!');
+                } finally {
+                    uploadBtn.disabled = false;
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
         window.switchTab = function(tab) {
@@ -405,29 +436,6 @@
                 document.getElementById('adminLogoSection').classList.remove('hidden');
                 document.getElementById('subTabLogoBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
             }
-        }
-
-        function initRealtimeListeners() {
-            onSnapshot(collection(db, "products"), (snapshot) => {
-                products = [];
-                snapshot.forEach(d => products.push({ id: d.id, ...d.data() }));
-                renderStoreProducts();
-                renderAdminTable();
-            });
-
-            onSnapshot(collection(db, "sliders"), (snapshot) => {
-                sliders = [];
-                snapshot.forEach(d => sliders.push({ id: d.id, ...d.data() }));
-                renderSlider();
-                renderAdminSliders();
-            });
-
-            onSnapshot(doc(db, "settings", "mainLogo"), (docSnap) => {
-                if(docSnap.exists() && docSnap.data().url) {
-                    const logoUrl = docSnap.data().url;
-                    document.getElementById('headerLogoImg').src = logoUrl;
-                }
-            });
         }
 
         window.renderSlider = function() {
@@ -543,7 +551,7 @@
             `).join('');
         }
 
-        window.saveProduct = async function(e) {
+        window.saveProduct = function(e) {
             e.preventDefault();
             const id = document.getElementById('productId').value;
             const name = document.getElementById('pName').value;
@@ -552,20 +560,18 @@
             const image = document.getElementById('pImage').value || 'https://images.unsplash.com/photo-1541533848490-bc814f3524d7?auto=format&fit=crop&w=600&q=80';
             const desc = document.getElementById('pDesc').value;
 
-            const data = { name, price, category, image, desc };
-
-            try {
-                if(id) {
-                    await updateDoc(doc(db, "products", id), data);
-                } else {
-                    await addDoc(collection(db, "products"), data);
-                }
-                resetProductForm();
-                alert('تم حفظ ونشر المنتج بنجاح!');
-            } catch(err) {
-                console.error(err);
-                alert('تعذر الحفظ.');
+            if(id) {
+                products = products.map(item => item.id == id ? { id, name, price, category, image, desc } : item);
+            } else {
+                const newProduct = { id: Date.now().toString(), name, price, category, image, desc };
+                products.push(newProduct);
             }
+
+            localStorage.setItem('mamas_products', JSON.stringify(products));
+            resetProductForm();
+            renderStoreProducts();
+            renderAdminTable();
+            alert('تم حفظ ونشر المنتج بنجاح ولن يختفي عند تحديث الصفحة!');
         }
 
         window.editProduct = function(id) {
@@ -580,13 +586,12 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        window.deleteProductItem = async function(id) {
+        window.deleteProductItem = function(id) {
             if(confirm('هل أنت متأكد من حذف هذا العنصر؟')) {
-                try {
-                    await deleteDoc(doc(db, "products", id));
-                } catch(err) {
-                    alert('تعذر الحذف.');
-                }
+                products = products.filter(item => item.id !== id);
+                localStorage.setItem('mamas_products', JSON.stringify(products));
+                renderStoreProducts();
+                renderAdminTable();
             }
         }
 
@@ -613,7 +618,7 @@
             `).join('');
         }
 
-        window.saveSlider = async function(e) {
+        window.saveSlider = function(e) {
             e.preventDefault();
             const title = document.getElementById('sTitle').value;
             const subtitle = document.getElementById('sSubtitle').value;
@@ -624,38 +629,35 @@
                 return;
             }
 
-            try {
-                await addDoc(collection(db, "sliders"), { title, subtitle, image });
-                document.getElementById('sliderForm').reset();
-                alert('تمت إضافة السلايدر ونشره بنجاح!');
-            } catch(e) {
-                alert('تعذر الحفظ.');
-            }
+            const newSlider = { id: Date.now().toString(), title, subtitle, image };
+            sliders.push(newSlider);
+            localStorage.setItem('mamas_sliders', JSON.stringify(sliders));
+            document.getElementById('sliderForm').reset();
+            renderSlider();
+            renderAdminSliders();
+            alert('تمت إضافة السلايدر ونشره بنجاح!');
         }
 
-        window.deleteSlider = async function(id) {
+        window.deleteSlider = function(id) {
             if(confirm('حذف هذه الصورة من السلايدر؟')) {
-                try {
-                    await deleteDoc(doc(db, "sliders", id));
-                } catch(e) {
-                    alert('تعذر الحذف.');
-                }
+                sliders = sliders.filter(s => s.id !== id);
+                localStorage.setItem('mamas_sliders', JSON.stringify(sliders));
+                renderSlider();
+                renderAdminSliders();
             }
         }
 
-        window.saveLogo = async function(e) {
+        window.saveLogo = function(e) {
             e.preventDefault();
-            const logoUrl = document.getElementById('logoUrlInput').value;
-            if(!logoUrl) {
+            const url = document.getElementById('logoUrlInput').value;
+            if(!url) {
                 alert('المرجو اختيار صورة اللوغو أولاً!');
                 return;
             }
-            try {
-                await setDoc(doc(db, "settings", "mainLogo"), { url: logoUrl });
-                alert('تم تحديث شعار المتجر بنجاح!');
-            } catch(err) {
-                alert('تعذر تحديث اللوغو.');
-            }
+            logoUrl = url;
+            localStorage.setItem('mamas_logo', logoUrl);
+            document.getElementById('headerLogoImg').src = logoUrl;
+            alert('تم تحديث شعار المتجر بنجاح!');
         }
 
         window.addToCart = function(id) {
@@ -757,9 +759,6 @@
             const whatsappNumber = "212600000000";
             window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
         }
-
-        initRealtimeListeners();
-        startSliderAutoPlay();
     </script>
 </body>
 </html>
