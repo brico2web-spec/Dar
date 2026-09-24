@@ -178,7 +178,7 @@
                                 <input type="url" id="pImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة المنتج (تُرفع أوتوماتيكياً عبر التوكن لمجلد images)</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة المنتج (تُرفع أوتوماتيكياً لمجلد images)</label>
                                 <input type="file" id="pImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'pImage', 'product')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:bg-brandRed file:text-white cursor-pointer">
                             </div>
                         </div>
@@ -442,7 +442,8 @@
         const ghUser = "brico2web";
         const ghRepo = "Dar";
         const ghBranch = "main";
-        const ghToken = "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";
+        // التوكن الجديد المدمج أوتوماتيكياً
+        const ghToken = "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";
 
         let products = JSON.parse(localStorage.getItem('mamas_products')) || [];
         let sliders = JSON.parse(localStorage.getItem('mamas_sliders')) || [];
@@ -511,7 +512,7 @@
             document.getElementById('fText3').innerText = footerData.line3;
         }
 
-        // الرفع التلقائي للصور وإنشاء الملفات في مجلد images على GitHub عبر الـ Token
+        // الرفع التلقائي وإنشاء الملفات في مجلد images على GitHub عبر الـ Token الصحيح
         window.uploadImageToGithub = async function(event, targetInputId, type) {
             const file = event.target.files[0];
             if (!file) return;
@@ -558,12 +559,13 @@
                         document.getElementById(targetInputId).value = directUrl;
                         alert('تم رفع الصورة أوتوماتيكياً وإنشاء الملف في مجلد images على GitHub بنجاح!');
                     } else {
+                        const errJson = await response.json();
+                        alert('خطأ في الرفع لـ GitHub: ' + (errJson.message || response.statusText));
                         document.getElementById(targetInputId).value = base64Full;
-                        alert('تمت إضافة الصورة بنجاح!');
                     }
                 } catch(err) {
                     document.getElementById(targetInputId).value = base64Full;
-                    alert('تمت إضافة الصورة بنجاح!');
+                    alert('تمت إضافة الصورة بنجاح محلياً!');
                 }
             };
             reader.readAsDataURL(file);
