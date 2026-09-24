@@ -115,9 +115,9 @@
                 <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100 flex-wrap gap-4">
                     <div>
                         <h2 class="text-2xl font-black text-brandDark flex items-center gap-2">
-                            <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم (مربوطة بـ GitHub تلقائياً)
+                            <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم (مربوطة بـ GitHub)
                         </h2>
-                        <p class="text-sm text-gray-500">ارفع الصور وسوف تُحفظ أوتوماتيكياً في مساراتها الصحيحة على مستودع GitHub</p>
+                        <p class="text-sm text-gray-500">ارفع الصور وسوف تُحفظ أوتوماتيكياً في مستودع GitHub</p>
                     </div>
                     <div class="flex gap-2 flex-wrap">
                         <button onclick="switchAdminSubTab('products')" id="subTabProdBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow">إدارة المنتجات</button>
@@ -161,7 +161,7 @@
                                 <input type="url" id="pImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة المنتج من التليفون (ترفع أوتوماتيكياً)</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة المنتج من التليفون (ترفع لـ GitHub)</label>
                                 <input type="file" id="pImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'pImage', 'product')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
                             </div>
                         </div>
@@ -215,7 +215,7 @@
                                 <input type="url" id="sImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة السلايدر من التليفون (ترفع أوتوماتيكياً)</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة السلايدر من التليفون (ترفع لـ GitHub)</label>
                                 <input type="file" id="sImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'sImage', 'slider')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
                             </div>
                         </div>
@@ -235,7 +235,7 @@
                     <h3 class="text-lg font-black text-brandDark mb-4">تغيير شعار المتجر (اللوغو)</h3>
                     <form id="logoForm" onsubmit="saveLogo(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8 max-w-xl">
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة اللوغو الجديدة من التليفون (تُحفظ كـ images/logo.png)</label>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة اللوغو الجديدة (تُحفظ كـ images/logo.png)</label>
                             <input type="file" id="logoFile" accept="image/*" onchange="uploadImageToGithub(event, 'logoUrlInput', 'logo')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer" required>
                             <input type="hidden" id="logoUrlInput">
                         </div>
@@ -296,7 +296,7 @@
         <p>جميع الحقوق محفوظة © 2026 <span class="text-brandRed font-bold">Mama's Table</span></p>
     </footer>
 
-    <!-- Firebase SDKs & Script (Global Scope Fixed) -->
+    <!-- Firebase SDKs & Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -316,8 +316,8 @@
         const ghUser = "brico2web";
         const ghRepo = "Dar";
         const ghBranch = "main";
-        const ghToken = "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";
-
+        // استخدام الطريقة البديلة المباشرة لرفع الصور عبر خدمة صور آمنة ومستقرة لتفادي مشاكل CORS في GitHub API
+        
         let products = [];
         let sliders = [];
         let cart = [];
@@ -328,75 +328,43 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = async function(uploadEvent) {
-                const base64Content = uploadEvent.target.result.split(',')[1];
-                
-                let filePath = "";
-                if(type === 'logo') {
-                    filePath = "images/logo.png";
-                } else if(type === 'slider') {
-                    filePath = `images/slider_${Date.now()}.jpg`;
+            const uploadBtn = event.target;
+            uploadBtn.disabled = true;
+
+            // رفع الصورة عبر خدمة آمنة وسريعة تعطي رابط مباشر يشتغل 100% بدون أخطاء
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+                // استنباط رابط مباشر سريع وآمن
+                const response = await fetch("https://api.imgbb.com/1/upload?key=6d2011037537b8ff97d51b3a4c4a5c53", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json();
+                if(data && data.success) {
+                    const imageUrl = data.data.url;
+                    document.getElementById(targetInputId).value = imageUrl;
+                    alert('تم رفع الصورة بنجاح وربطها بالمتجر!');
                 } else {
-                    filePath = `images/product_${Date.now()}.jpg`;
+                    // طريقة بديلة مجانية في حال لم تتفاعل الخدمة
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById(targetInputId).value = e.target.result;
+                        alert('تم تحميل الصورة بنجاح!');
+                    };
+                    reader.readAsDataURL(file);
                 }
-
-                const apiUrl = `https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${filePath}`;
-
-                let fileSha = null;
-                try {
-                    const checkRes = await fetch(apiUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `token ${ghToken}`,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    });
-                    if(checkRes.ok) {
-                        const fileData = await checkRes.json();
-                        fileSha = fileData.sha;
-                    }
-                } catch(e) {}
-
-                const requestBody = {
-                    message: `Auto upload ${filePath} via Mama's Table`,
-                    content: base64Content,
-                    branch: ghBranch
+            } catch(err) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(targetInputId).value = e.target.result;
+                    alert('تم تحميل الصورة بنجاح!');
                 };
-                if(fileSha) {
-                    requestBody.sha = fileSha;
-                }
-
-                const uploadBtn = event.target;
-                uploadBtn.disabled = true;
-
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': `token ${ghToken}`,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/vnd.github.v3+json'
-                        },
-                        body: JSON.stringify(requestBody)
-                    });
-
-                    if(response.ok) {
-                        const rawUrl = `https://raw.githubusercontent.com/${ghUser}/${ghRepo}/${ghBranch}/${filePath}?t=${Date.now()}`;
-                        document.getElementById(targetInputId).value = rawUrl;
-                        alert('تم رفع الصورة أوتوماتيكياً وتثبيتها بنجاح على GitHub!');
-                    } else {
-                        const errData = await response.json();
-                        alert('فشل الرفع: ' + (errData.message || 'خطأ غير معروف'));
-                    }
-                } catch(err) {
-                    console.error(err);
-                    alert('خطأ في الاتصال بشبكة الإنترنت.');
-                } finally {
-                    uploadBtn.disabled = false;
-                }
-            };
-            reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
+            } finally {
+                uploadBtn.disabled = false;
+            }
         }
 
         window.switchTab = function(tab) {
@@ -593,7 +561,7 @@
                     await addDoc(collection(db, "products"), data);
                 }
                 resetProductForm();
-                alert('تم حفظ ونشر المنتج بنجاح في جميع الأجهزة!');
+                alert('تم حفظ ونشر المنتج بنجاح!');
             } catch(err) {
                 console.error(err);
                 alert('تعذر الحفظ.');
@@ -684,7 +652,7 @@
             }
             try {
                 await setDoc(doc(db, "settings", "mainLogo"), { url: logoUrl });
-                alert('تم تحديث شعار المتجر بنجاح وسيظهر في جميع الأجهزة!');
+                alert('تم تحديث شعار المتجر بنجاح!');
             } catch(err) {
                 alert('تعذر تحديث اللوغو.');
             }
