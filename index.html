@@ -37,8 +37,8 @@
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <!-- Logo & Title -->
             <div class="flex items-center space-x-3 space-x-reverse cursor-pointer group" onclick="switchTab('store')">
-                <div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-brandYellow shadow-md flex items-center justify-center bg-amber-50 group-hover:scale-105 transition">
-                    <img id="headerLogoImg" src="images/logo.png" alt="Mama's Table Logo" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=300&q=80'">
+                <div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-brandYellow shadow-md flex items-center justify-center bg-amber-50 group-hover:scale-105 transition p-1">
+                    <img id="headerLogoImg" src="images/logo.png" alt="Mama's Table Logo" class="w-full h-full object-contain" onerror="this.src='https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=300&q=80'">
                 </div>
                 <div>
                     <h1 class="text-xl md:text-2xl font-black text-brandRed tracking-wide leading-none">Mama's Table</h1>
@@ -46,13 +46,10 @@
                 </div>
             </div>
 
-            <!-- Navigation Buttons -->
+            <!-- Navigation Buttons (Without Lock Button) -->
             <div class="flex items-center space-x-2 space-x-reverse">
                 <button onclick="switchTab('store')" id="btnStore" class="px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-brandRed text-white shadow-md transition flex items-center gap-2">
                     <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">المتجر</span>
-                </button>
-                <button onclick="switchTab('admin')" id="btnAdmin" class="px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition flex items-center gap-2">
-                    <i class="fa-solid fa-lock"></i> <span class="hidden sm:inline">الإدارة</span>
                 </button>
                 <button onclick="openCartModal()" class="relative px-3.5 py-2 rounded-xl text-sm font-bold bg-amber-100 text-amber-900 hover:bg-amber-200 transition flex items-center gap-1.5 shadow-sm">
                     <i class="fa-solid fa-shopping-cart text-lg"></i>
@@ -70,10 +67,7 @@
             
             <!-- Dynamic Hero Slider -->
             <div class="relative rounded-3xl overflow-hidden shadow-2xl mb-10 bg-brandDark min-h-[320px] md:min-h-[400px] flex items-center">
-                <div id="heroSliderContainer" class="absolute inset-0 w-full h-full flex transition-transform duration-700 ease-in-out">
-                    <!-- Slider slides will be loaded dynamically -->
-                </div>
-                <!-- Slider Controls -->
+                <div id="heroSliderContainer" class="absolute inset-0 w-full h-full flex transition-transform duration-700 ease-in-out"></div>
                 <button onclick="prevSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition z-20">
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
@@ -82,19 +76,35 @@
                 </button>
             </div>
 
-            <!-- Categories Filter Bar -->
+            <!-- Special Promo Section: 3 Foods for 200 DH -->
+            <div class="bg-gradient-to-r from-brandRed to-amber-700 rounded-3xl p-6 md:p-8 text-white shadow-xl mb-12 relative overflow-hidden">
+                <div class="absolute -left-10 -bottom-10 opacity-10 text-9xl font-black">🔥</div>
+                <div class="relative z-10">
+                    <div class="text-center max-w-xl mx-auto mb-8">
+                        <span class="bg-brandYellow text-brandDark text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest inline-block mb-3 shadow">عرض حصري محدود</span>
+                        <h2 id="promoTitleDisplay" class="text-2xl md:text-4xl font-black mb-2">عرض خاص: 3 مأكولات بـ 200 درهم فقط!</h2>
+                        <p id="promoDescDisplay" class="text-amber-100 text-sm md:text-base">اختر طبقك المفضل من بين أشهى الأطباق واستمتع بأفضل العروض معنا.</p>
+                    </div>
+
+                    <!-- 3 Slots Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8" id="promoSlotsContainer"></div>
+
+                    <div class="text-center">
+                        <button onclick="addPromoToCart()" class="bg-brandYellow hover:bg-amber-400 text-brandDark font-black px-8 py-3.5 rounded-2xl shadow-lg transition text-base">
+                            <i class="fa-solid fa-cart-plus ml-2"></i> اطلب العرض المتكامل بـ 200 د.م
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Filter Bar (Search Removed) -->
             <div class="flex items-center justify-between mb-8 flex-wrap gap-4 border-b border-gray-200 pb-4">
                 <div class="flex items-center gap-3">
                     <h3 id="productsSection" class="text-2xl font-black text-brandDark flex items-center gap-2">
                         <i class="fa-solid fa-utensils text-brandRed"></i> قائمة المأكولات والمنتجات
                     </h3>
                 </div>
-                <!-- Search & Category Filters -->
                 <div class="flex items-center gap-3 flex-wrap">
-                    <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-2xl shadow-sm border border-gray-200">
-                        <input type="text" id="searchInput" placeholder="ابحثي عن طبق أو منتج..." onkeyup="filterProducts()" class="text-sm outline-none bg-transparent w-44 md:w-56">
-                        <i class="fa-solid fa-search text-gray-400"></i>
-                    </div>
                     <select id="categoryFilter" onchange="filterProducts()" class="bg-white px-4 py-2.5 rounded-2xl shadow-sm border border-gray-200 text-sm font-bold text-brandDark outline-none cursor-pointer">
                         <option value="all">جميع الاقسام</option>
                         <option value="food">مأكولات وأطباق</option>
@@ -104,9 +114,7 @@
             </div>
 
             <!-- Products Grid -->
-            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Loaded dynamically -->
-            </div>
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
         </div>
 
         <!-- ================= ADMIN TAB ================= -->
@@ -115,14 +123,18 @@
                 <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100 flex-wrap gap-4">
                     <div>
                         <h2 class="text-2xl font-black text-brandDark flex items-center gap-2">
-                            <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم (مربوطة بـ GitHub)
+                            <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم المتكاملة
                         </h2>
-                        <p class="text-sm text-gray-500">رفع الصور مباشرة لمجلد images في مستودع GitHub أوتوماتيكياً</p>
+                        <p class="text-sm text-gray-500">إدارة المنتجات، السلايدر، العروض، الطلبات، والفوتر بسهولة تامة</p>
                     </div>
                     <div class="flex gap-2 flex-wrap">
-                        <button onclick="switchAdminSubTab('products')" id="subTabProdBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow">إدارة المنتجات</button>
-                        <button onclick="switchAdminSubTab('sliders')" id="subTabSlideBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">إدارة السلايدر</button>
-                        <button onclick="switchAdminSubTab('logo')" id="subTabLogoBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">تغيير اللوغو</button>
+                        <button onclick="switchAdminSubTab('products')" id="subTabProdBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow">المنتجات</button>
+                        <button onclick="switchAdminSubTab('sliders')" id="subTabSlideBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">السلايدر</button>
+                        <button onclick="switchAdminSubTab('promo')" id="subTabPromoBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">العرض (3 بـ200)</button>
+                        <button onclick="switchAdminSubTab('orders')" id="subTabOrdersBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">الطلبات الواردة</button>
+                        <button onclick="switchAdminSubTab('logo')" id="subTabLogoBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">اللوغو</button>
+                        <button onclick="switchAdminSubTab('footer')" id="subTabFooterBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">الفوتر</button>
+                        <button onclick="switchTab('store')" class="px-3 py-2 rounded-xl text-xs font-bold bg-gray-200 text-gray-800">إغلاق الإدارة</button>
                     </div>
                 </div>
 
@@ -132,50 +144,43 @@
                         <h3 class="text-lg font-black text-brandDark">إضافة أو تعديل منتج / أكلة</h3>
                         <button onclick="resetProductForm()" class="text-xs font-bold bg-gray-100 px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-200">فرغ الحقول</button>
                     </div>
-
-                    <!-- Product Form -->
                     <form id="productForm" onsubmit="saveProduct(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8">
                         <input type="hidden" id="productId">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">اسم الأكلة / المنتج</label>
-                                <input type="text" id="pName" required placeholder="مثال: طاجين لحم بالبرقوق" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm">
+                                <input type="text" id="pName" required placeholder="مثال: طاجين لحم بالبرقوق" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">الثمن (درهم مغربي)</label>
-                                <input type="number" id="pPrice" required placeholder="مثال: 120" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm">
+                                <input type="number" id="pPrice" required placeholder="مثال: 120" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">القسم</label>
-                                <select id="pCategory" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm font-bold">
+                                <select id="pCategory" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-bold">
                                     <option value="food">مأكولات وأطباق</option>
                                     <option value="kitchen">أواني وأدوات المطبخ</option>
                                 </select>
                             </div>
                         </div>
-
-                        <!-- Image Upload Options -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">رابط الصورة (URL مباشر)</label>
-                                <input type="url" id="pImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm">
+                                <input type="url" id="pImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة المنتج من التليفون (ترفع لمجلد images)</label>
-                                <input type="file" id="pImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'pImage', 'product')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة المنتج (تُحفظ في مجلد images)</label>
+                                <input type="file" id="pImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'pImage', 'product')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:bg-brandRed file:text-white cursor-pointer">
                             </div>
                         </div>
-
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-gray-700 mb-1">وصف المأكولات / المكونات أو التفاصيل</label>
-                            <textarea id="pDesc" rows="2" required placeholder="مكونات الطبق أو مميزات المنتج..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm"></textarea>
+                            <textarea id="pDesc" rows="2" required placeholder="مكونات الطبق أو مميزات المنتج..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm"></textarea>
                         </div>
                         <div class="flex justify-end gap-3">
                             <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">حفظ ونشر على المتجر</button>
                         </div>
                     </form>
-
-                    <!-- Products Table -->
                     <h3 class="text-lg font-black text-brandDark mb-4">قائمة العناصر الحالية</h3>
                     <div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white">
                         <table class="w-full text-right border-collapse">
@@ -188,9 +193,7 @@
                                     <th class="p-4 text-center">إجراءات</th>
                                 </tr>
                             </thead>
-                            <tbody id="adminProductsTable" class="divide-y divide-gray-100 text-sm">
-                                <tr><td colspan="5" class="p-6 text-center text-gray-400">جاري التحميل...</td></tr>
-                            </tbody>
+                            <tbody id="adminProductsTable" class="divide-y divide-gray-100 text-sm"></tbody>
                         </table>
                     </div>
                 </div>
@@ -215,18 +218,55 @@
                                 <input type="url" id="sImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة السلايدر من التليفون (تُحفظ في images)</label>
-                                <input type="file" id="sImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'sImage', 'slider')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة السلايدر</label>
+                                <input type="file" id="sImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'sImage', 'slider')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:bg-brandRed file:text-white cursor-pointer">
                             </div>
                         </div>
                         <div class="flex justify-end">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">إضافة ونشر السلايدر</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow">إضافة ونشر السلايدر</button>
                         </div>
                     </form>
-
                     <h3 class="text-lg font-black text-brandDark mb-4">صور السلايدر الحالية</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="adminSlidersGrid">
-                        <!-- Loaded dynamically -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="adminSlidersGrid"></div>
+                </div>
+
+                <!-- Promo Management Section -->
+                <div id="adminPromoSection" class="hidden">
+                    <h3 class="text-lg font-black text-brandDark mb-4">تعديل عبارات وإعدادات عرض (3 مأكولات بـ 200 درهم)</h3>
+                    <form id="promoForm" onsubmit="savePromoSettings(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-6">
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">عنوان العرض المثير</label>
+                            <input type="text" id="promoTitleInput" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">الوصف التحفيزي للعرض</label>
+                            <input type="text" id="promoDescInput" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow">حفظ إعدادات العرض</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Orders Management Section -->
+                <div id="adminOrdersSection" class="hidden">
+                    <h3 class="text-lg font-black text-brandDark mb-4">الطلبات المطلوبة والواردة</h3>
+                    <div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-xs font-black text-gray-600">
+                                    <th class="p-4">الزبون</th>
+                                    <th class="p-4">الهاتف</th>
+                                    <th class="p-4">العنوان</th>
+                                    <th class="p-4">التفاصيل والطلبات</th>
+                                    <th class="p-4">المجموع</th>
+                                    <th class="p-4 text-center">إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminOrdersTable" class="divide-y divide-gray-100 text-sm">
+                                <tr><td colspan="6" class="p-6 text-center text-gray-400">لا توجد طلبات مسجلة بعد.</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -235,12 +275,26 @@
                     <h3 class="text-lg font-black text-brandDark mb-4">تغيير شعار المتجر (اللوغو)</h3>
                     <form id="logoForm" onsubmit="saveLogo(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8 max-w-xl">
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة اللوغو الجديدة (تُحفظ كـ images/logo.png)</label>
-                            <input type="file" id="logoFile" accept="image/*" onchange="uploadImageToGithub(event, 'logoUrlInput', 'logo')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer" required>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة اللوغو الجديدة</label>
+                            <input type="file" id="logoFile" accept="image/*" onchange="uploadImageToGithub(event, 'logoUrlInput', 'logo')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:bg-brandRed file:text-white cursor-pointer" required>
                             <input type="hidden" id="logoUrlInput">
                         </div>
                         <div class="flex justify-end">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">تحديث ونشر اللوغو</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow">تحديث اللوغو</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer Management Section -->
+                <div id="adminFooterSection" class="hidden">
+                    <h3 class="text-lg font-black text-brandDark mb-4">تعديل معلومات الفوتر (Footer)</h3>
+                    <form id="footerForm" onsubmit="saveFooterSettings(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8 max-w-xl">
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">نص حقوق الملكية / وصف الفوتر</label>
+                            <input type="text" id="footerTextInput" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow">حفظ معلومات الفوتر</button>
                         </div>
                     </form>
                 </div>
@@ -249,6 +303,47 @@
         </div>
 
     </main>
+
+    <!-- Modal for Selecting Promo Food Items -->
+    <div id="foodSelectModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+                <h3 class="text-xl font-black text-brandDark flex items-center gap-2">
+                    <i class="fa-solid fa-utensils text-brandRed"></i> اختر مأكولات العرض المتاحة
+                </h3>
+                <button onclick="closeFoodSelectModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">حدد المأكولات التي تود أن تظهر للزبناء عند اختيار هذا الخانة في العرض:</p>
+            <div id="foodSelectList" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- Login Modal for Admin Authentication -->
+    <div id="loginModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+                <h3 class="text-lg font-black text-brandDark flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-brandRed"></i> تسجيل دخول المشرفة
+                </h3>
+                <button onclick="closeLoginModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">اسم المستخدم (Username)</label>
+                    <input type="text" id="loginUser" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">كلمة المرور (Password)</label>
+                    <input type="password" id="loginPass" required class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm bg-white">
+                </div>
+                <button type="submit" class="w-full bg-brandRed hover:bg-red-700 text-white font-black py-3 rounded-xl shadow transition">دخول لوحة الإدارة</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Cart Modal -->
     <div id="cartModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
@@ -291,12 +386,15 @@
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- Footer with Admin Button -->
     <footer class="bg-white border-t border-gray-200 py-6 mt-12 text-center text-xs text-gray-500 font-semibold">
-        <p>جميع الحقوق محفوظة © 2026 <span class="text-brandRed font-bold">Mama's Table</span></p>
+        <p id="footerTextDisplay" class="mb-2">جميع الحقوق محفوظة © 2026 Mama's Table</p>
+        <button onclick="openLoginModal()" class="text-brandRed font-bold hover:underline bg-red-50 px-3 py-1 rounded-lg border border-red-100 transition inline-flex items-center gap-1.5">
+            <i class="fa-solid fa-user-shield"></i> Admin
+        </button>
     </footer>
 
-    <!-- Script & LocalStorage / GitHub API Integration -->
+    <!-- Script & Logic -->
     <script>
         const ghUser = "brico2web";
         const ghRepo = "Dar";
@@ -305,21 +403,41 @@
 
         let products = JSON.parse(localStorage.getItem('mamas_products')) || [];
         let sliders = JSON.parse(localStorage.getItem('mamas_sliders')) || [];
+        let orders = JSON.parse(localStorage.getItem('mamas_orders')) || [];
         let logoUrl = localStorage.getItem('mamas_logo') || "images/logo.png";
+        let footerText = localStorage.getItem('mamas_footer') || "جميع الحقوق محفوظة © 2026 Mama's Table";
+        
+        let promoSettings = JSON.parse(localStorage.getItem('mamas_promo')) || {
+            title: "عرض خاص: 3 مأكولات بـ 200 درهم فقط!",
+            desc: "اختر أطباقك المفضلة واستمتع بتجربة ذوق رفيع لا تُقاوم."
+        };
+
+        let promoSlots = JSON.parse(localStorage.getItem('mamas_promo_slots')) || [null, null, null];
+        let activeSlotIndex = null;
         let cart = [];
         let currentSlideIndex = 0;
         let slideInterval;
 
         window.onload = function() {
             document.getElementById('headerLogoImg').src = logoUrl;
+            document.getElementById('footerTextDisplay').innerText = footerText;
+            document.getElementById('promoTitleDisplay').innerText = promoSettings.title;
+            document.getElementById('promoDescDisplay').innerText = promoSettings.desc;
+            
+            document.getElementById('promoTitleInput').value = promoSettings.title;
+            document.getElementById('promoDescInput').value = promoSettings.desc;
+            document.getElementById('footerTextInput').value = footerText;
+
             renderStoreProducts();
             renderSlider();
+            renderPromoSlots();
             renderAdminTable();
             renderAdminSliders();
+            renderAdminOrders();
             startSliderAutoPlay();
         };
 
-        // الرفع المباشر والآمن لمجلد images في GitHub عبر Base64 API
+        // الرفع المباشر لـ GitHub API لمجلد images
         window.uploadImageToGithub = async function(event, targetInputId, type) {
             const file = event.target.files[0];
             if (!file) return;
@@ -339,15 +457,11 @@
                 }
 
                 const apiUrl = `https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${filePath}`;
-
                 let fileSha = null;
                 try {
                     const checkRes = await fetch(apiUrl, {
                         method: 'GET',
-                        headers: {
-                            'Authorization': `token ${ghToken}`,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
+                        headers: { 'Authorization': `token ${ghToken}`, 'Accept': 'application/vnd.github.v3+json' }
                     });
                     if(checkRes.ok) {
                         const fileData = await checkRes.json();
@@ -355,44 +469,27 @@
                     }
                 } catch(e) {}
 
-                const requestBody = {
-                    message: `Upload ${filePath} via Mama's Table Admin`,
-                    content: base64Content,
-                    branch: ghBranch
-                };
-                if(fileSha) {
-                    requestBody.sha = fileSha;
-                }
-
-                const uploadBtn = event.target;
-                uploadBtn.disabled = true;
+                const requestBody = { message: `Upload ${filePath} via Mama's Table`, content: base64Content, branch: ghBranch };
+                if(fileSha) requestBody.sha = fileSha;
 
                 try {
                     const response = await fetch(apiUrl, {
                         method: 'PUT',
-                        headers: {
-                            'Authorization': `token ${ghToken}`,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/vnd.github.v3+json'
-                        },
+                        headers: { 'Authorization': `token ${ghToken}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
                         body: JSON.stringify(requestBody)
                     });
 
                     if(response.ok) {
-                        // رابط مباشر ونظيف من GitHub Raw
                         const directUrl = `https://raw.githubusercontent.com/${ghUser}/${ghRepo}/${ghBranch}/${filePath}?t=${Date.now()}`;
                         document.getElementById(targetInputId).value = directUrl;
                         alert('تم رفع الصورة أوتوماتيكياً وحفظها في مجلد images على GitHub بنجاح!');
                     } else {
-                        // في حال حدث أي ضغط، يتم اعتماد الرابط المحلي المؤقت لضمان عدم توقف العمل
                         document.getElementById(targetInputId).value = base64Full;
                         alert('تمت إضافة الصورة بنجاح!');
                     }
                 } catch(err) {
                     document.getElementById(targetInputId).value = base64Full;
                     alert('تمت إضافة الصورة بنجاح!');
-                } finally {
-                    uploadBtn.disabled = false;
                 }
             };
             reader.readAsDataURL(file);
@@ -401,41 +498,181 @@
         window.switchTab = function(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById('btnStore').className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition flex items-center gap-2";
-            document.getElementById('btnAdmin').className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition flex items-center gap-2";
 
             if(tab === 'store') {
                 document.getElementById('tabStore').classList.add('active');
                 document.getElementById('btnStore').className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-brandRed text-white shadow-md transition flex items-center gap-2";
                 renderStoreProducts();
+                renderPromoSlots();
                 startSliderAutoPlay();
             } else {
                 document.getElementById('tabAdmin').classList.add('active');
-                document.getElementById('btnAdmin').className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-brandRed text-white shadow-md transition flex items-center gap-2";
                 renderAdminTable();
                 renderAdminSliders();
+                renderAdminOrders();
                 stopSliderAutoPlay();
             }
         }
 
+        window.openLoginModal = function() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+        window.closeLoginModal = function() {
+            document.getElementById('loginModal').classList.add('hidden');
+        }
+
+        window.handleLogin = function(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value.trim();
+
+            if(u === 'Mouna' && p === '14634') {
+                closeLoginModal();
+                switchTab('admin');
+                document.getElementById('loginUser').value = '';
+                document.getElementById('loginPass').value = '';
+            } else {
+                alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
+            }
+        }
+
         window.switchAdminSubTab = function(sub) {
-            document.getElementById('adminProductsSection').classList.add('hidden');
-            document.getElementById('adminSlidersSection').classList.add('hidden');
-            document.getElementById('adminLogoSection').classList.add('hidden');
-            
-            document.getElementById('subTabProdBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200";
-            document.getElementById('subTabSlideBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200";
-            document.getElementById('subTabLogoBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200";
+            ['adminProductsSection', 'adminSlidersSection', 'adminPromoSection', 'adminOrdersSection', 'adminLogoSection', 'adminFooterSection'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            ['subTabProdBtn', 'subTabSlideBtn', 'subTabPromoBtn', 'subTabOrdersBtn', 'subTabLogoBtn', 'subTabFooterBtn'].forEach(id => {
+                document.getElementById(id).className = "px-3 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200";
+            });
 
             if(sub === 'products') {
                 document.getElementById('adminProductsSection').classList.remove('hidden');
-                document.getElementById('subTabProdBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
+                document.getElementById('subTabProdBtn').className = "px-3 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
             } else if(sub === 'sliders') {
                 document.getElementById('adminSlidersSection').classList.remove('hidden');
-                document.getElementById('subTabSlideBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
+                document.getElementById('subTabSlideBtn').className = "px-3 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
+            } else if(sub === 'promo') {
+                document.getElementById('adminPromoSection').classList.remove('hidden');
+                document.getElementById('subTabPromoBtn').className = "px-3 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
+            } else if(sub === 'orders') {
+                document.getElementById('adminOrdersSection').classList.remove('hidden');
+                document.getElementById('subTabOrdersBtn').className = "px-3 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
             } else if(sub === 'logo') {
                 document.getElementById('adminLogoSection').classList.remove('hidden');
-                document.getElementById('subTabLogoBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
+                document.getElementById('subTabLogoBtn').className = "px-3 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
+            } else if(sub === 'footer') {
+                document.getElementById('adminFooterSection').classList.remove('hidden');
+                document.getElementById('subTabFooterBtn').className = "px-3 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
             }
+        }
+
+        // Promo Slots Management
+        window.renderPromoSlots = function() {
+            const container = document.getElementById('promoSlotsContainer');
+            container.innerHTML = promoSlots.map((item, index) => {
+                if(item) {
+                    return `
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 flex items-center justify-between shadow-lg">
+                            <div class="flex items-center gap-3">
+                                <img src="${item.image}" class="w-14 h-14 rounded-xl object-cover shadow">
+                                <div>
+                                    <h4 class="font-black text-sm text-white">${item.name}</h4>
+                                    <span class="text-xs text-amber-200">${item.price} د.م</span>
+                                </div>
+                            </div>
+                            <button onclick="openFoodSelectModal(${index})" class="w-9 h-9 bg-white/20 hover:bg-white/30 text-white rounded-xl flex items-center justify-center font-bold transition">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div onclick="openFoodSelectModal(${index})" class="bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-2xl p-6 border-2 border-dashed border-white/30 flex flex-col items-center justify-center cursor-pointer transition h-32 text-center group">
+                            <div class="w-10 h-10 rounded-full bg-brandYellow text-brandDark flex items-center justify-center font-black mb-2 shadow group-hover:scale-110 transition">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                            <span class="text-xs font-bold text-amber-100">اختر مأكولات العرض</span>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        window.openFoodSelectModal = function(slotIndex) {
+            activeSlotIndex = slotIndex;
+            const list = document.getElementById('foodSelectList');
+            const foodProducts = products.filter(p => p.category === 'food');
+
+            if(foodProducts.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-400 py-6">لا توجد مأكولات مضافة في القائمة حالياً. أضف مأكولات أولاً.</p>';
+            } else {
+                list.innerHTML = foodProducts.map(p => `
+                    <div onclick="selectFoodForPromo('${p.id}')" class="flex items-center justify-between p-3 rounded-2xl border border-gray-100 hover:bg-amber-50 cursor-pointer transition">
+                        <div class="flex items-center gap-3">
+                            <img src="${p.image}" class="w-12 h-12 rounded-xl object-cover shadow-sm">
+                            <div>
+                                <h5 class="font-bold text-sm text-brandDark">${p.name}</h5>
+                                <span class="text-xs text-brandRed font-black">${p.price} د.م</span>
+                            </div>
+                        </div>
+                        <span class="bg-brandRed text-white text-xs font-bold px-3 py-1.5 rounded-xl">اختيار</span>
+                    </div>
+                `).join('');
+            }
+            document.getElementById('foodSelectModal').classList.remove('hidden');
+        }
+
+        window.closeFoodSelectModal = function() {
+            document.getElementById('foodSelectModal').classList.add('hidden');
+        }
+
+        window.selectFoodForPromo = function(productId) {
+            const p = products.find(item => item.id === productId);
+            if(p && activeSlotIndex !== null) {
+                promoSlots[activeSlotIndex] = p;
+                localStorage.setItem('mamas_promo_slots', JSON.stringify(promoSlots));
+                renderPromoSlots();
+                closeFoodSelectModal();
+                alert('تم تحديد المأكولات للعرض بنجاح!');
+            }
+        }
+
+        window.addPromoToCart = function() {
+            const filled = promoSlots.filter(item => item !== null);
+            if(filled.length < 3) {
+                alert('المرجو اختيار المأكولات الثلاثة بالكامل لتفعيل العرض!');
+                return;
+            }
+            const promoBundle = {
+                id: 'promo_' + Date.now(),
+                name: 'عرض 3 مأكولات خاصة',
+                price: 200,
+                category: 'food',
+                image: filled[0].image,
+                desc: 'العرض يضم: ' + filled.map(i => i.name).join('، '),
+                qty: 1,
+                isPromo: true
+            };
+            cart.push(promoBundle);
+            updateCartUI();
+            alert('تمت إضافة العرض المتكامل (3 مأكولات بـ 200 د.م) إلى السلة بنجاح!');
+        }
+
+        window.savePromoSettings = function(e) {
+            e.preventDefault();
+            promoSettings.title = document.getElementById('promoTitleInput').value;
+            promoSettings.desc = document.getElementById('promoDescInput').value;
+            localStorage.setItem('mamas_promo', JSON.stringify(promoSettings));
+            document.getElementById('promoTitleDisplay').innerText = promoSettings.title;
+            document.getElementById('promoDescDisplay').innerText = promoSettings.desc;
+            alert('تم حفظ إعدادات العرض بنجاح!');
+        }
+
+        window.saveFooterSettings = function(e) {
+            e.preventDefault();
+            footerText = document.getElementById('footerTextInput').value;
+            localStorage.setItem('mamas_footer', footerText);
+            document.getElementById('footerTextDisplay').innerText = footerText;
+            alert('تم حفظ بيانات الفوتر بنجاح!');
         }
 
         window.renderSlider = function() {
@@ -461,9 +698,7 @@
 
         window.updateSliderPosition = function() {
             const container = document.getElementById('heroSliderContainer');
-            if(container) {
-                container.style.transform = `translateX(${currentSlideIndex * 100}%)`;
-            }
+            if(container) container.style.transform = `translateX(${currentSlideIndex * 100}%)`;
         }
 
         window.nextSlide = function() {
@@ -489,20 +724,15 @@
 
         window.renderStoreProducts = function() {
             const grid = document.getElementById('productsGrid');
-            const searchInputEl = document.getElementById('searchInput');
-            const categoryFilterEl = document.getElementById('categoryFilter');
-            
-            const search = searchInputEl ? searchInputEl.value.toLowerCase() : '';
-            const cat = categoryFilterEl ? categoryFilterEl.value : 'all';
+            const cat = document.getElementById('categoryFilter') ? document.getElementById('categoryFilter').value : 'all';
 
             const filtered = products.filter(p => {
-                const matchSearch = p.name.toLowerCase().includes(search) || (p.desc && p.desc.toLowerCase().includes(search));
                 const matchCat = cat === 'all' || p.category === cat;
-                return matchSearch && matchCat;
+                return matchCat;
             });
 
             if(filtered.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 font-bold">لا توجد منتجات مطابقة للبحث.</div>';
+                grid.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 font-bold">لا توجد منتجات مضافة بعد.</div>';
                 return;
             }
 
@@ -563,8 +793,7 @@
             if(id) {
                 products = products.map(item => item.id == id ? { id, name, price, category, image, desc } : item);
             } else {
-                const newProduct = { id: Date.now().toString(), name, price, category, image, desc };
-                products.push(newProduct);
+                products.push({ id: Date.now().toString(), name, price, category, image, desc });
             }
 
             localStorage.setItem('mamas_products', JSON.stringify(products));
@@ -624,13 +853,9 @@
             const subtitle = document.getElementById('sSubtitle').value;
             const image = document.getElementById('sImage').value;
 
-            if(!image) {
-                alert('المرجو إدخال رابط أو اختيار صورة للسلايدر!');
-                return;
-            }
+            if(!image) { alert('المرجو إدخال رابط أو اختيار صورة للسلايدر!'); return; }
 
-            const newSlider = { id: Date.now().toString(), title, subtitle, image };
-            sliders.push(newSlider);
+            sliders.push({ id: Date.now().toString(), title, subtitle, image });
             localStorage.setItem('mamas_sliders', JSON.stringify(sliders));
             document.getElementById('sliderForm').reset();
             renderSlider();
@@ -647,13 +872,39 @@
             }
         }
 
+        window.renderAdminOrders = function() {
+            const tbody = document.getElementById('adminOrdersTable');
+            if(!tbody) return;
+            if(orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400">لا توجد طلبات مسجلة بعد.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = orders.map(o => `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="p-4 font-bold text-brandDark">${o.name}</td>
+                    <td class="p-4 text-gray-600">${o.phone}</td>
+                    <td class="p-4 text-gray-600">${o.address}</td>
+                    <td class="p-4 text-xs text-gray-700">${o.itemsSummary}</td>
+                    <td class="p-4 font-black text-brandRed">${o.total} د.م</td>
+                    <td class="p-4 text-center">
+                        <button onclick="deleteOrder('${o.id}')" class="bg-red-100 text-red-700 p-2 rounded-xl text-xs font-bold hover:bg-red-200 transition"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.deleteOrder = function(id) {
+            if(confirm('حذف هذا الطلب؟')) {
+                orders = orders.filter(o => o.id !== id);
+                localStorage.setItem('mamas_orders', JSON.stringify(orders));
+                renderAdminOrders();
+            }
+        }
+
         window.saveLogo = function(e) {
             e.preventDefault();
             const url = document.getElementById('logoUrlInput').value;
-            if(!url) {
-                alert('المرجو اختيار صورة اللوغو أولاً!');
-                return;
-            }
+            if(!url) { alert('المرجو اختيار صورة اللوغو أولاً!'); return; }
             logoUrl = url;
             localStorage.setItem('mamas_logo', logoUrl);
             document.getElementById('headerLogoImg').src = logoUrl;
@@ -743,21 +994,36 @@
                 return;
             }
 
+            let summaryText = "";
+            let total = 0;
+            cart.forEach(item => {
+                summaryText += `${item.name} (${item.qty}x) - `;
+                total += item.price * item.qty;
+            });
+
+            const newOrder = {
+                id: Date.now().toString(),
+                name, phone, address, itemsSummary: summaryText, total
+            };
+            orders.unshift(newOrder);
+            localStorage.setItem('mamas_orders', JSON.stringify(orders));
+            renderAdminOrders();
+
             let msg = `*طلب جديد من متجر Mama's Table*%0A%0A`;
             msg += `👤 *الاسم:* ${name}%0A`;
             msg += `📞 *الهاتف:* ${phone}%0A`;
             msg += `📍 *العنوان:* ${address}%0A%0A`;
             msg += `🛒 *الطلبات:*%0A`;
-
-            let total = 0;
             cart.forEach(item => {
                 msg += `- ${item.name} (${item.qty}x) : ${item.price * item.qty} د.م%0A`;
-                total += item.price * item.qty;
             });
             msg += `%0A💰 *المجموع الكلي:* ${total} د.م`;
 
             const whatsappNumber = "212600000000";
             window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+            cart = [];
+            updateCartUI();
+            closeCartModal();
         }
     </script>
 </body>
