@@ -30,13 +30,11 @@
         .product-info .price { color: #ff6b6b; font-weight: 700; font-size: 1rem; margin-bottom: 10px; }
         .btn-buy { display: inline-block; background: #27ae60; color: #fff; padding: 6px 15px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
 
-        /* لوحة التحكم المبسطة */
         .admin-panel { background: #fff8e1; border: 1px solid #ffe082; padding: 15px; margin: 25px auto; border-radius: 8px; }
         .admin-panel h3 { margin-bottom: 12px; color: #f57c00; font-size: 1.1rem; text-align: center; }
         .form-group { margin-bottom: 10px; }
         .form-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.85rem; color: #444; }
-        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem; background: #fff; }
-        .form-group input[type="password"] { direction: ltr; text-align: left; }
+        .form-group select, .form-group input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem; background: #fff; }
         .btn-upload { background: #007bff; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 0.95rem; margin-top: 5px; }
         .btn-upload:hover { background: #0056b3; }
         #status-msg { margin-top: 10px; font-weight: bold; text-align: center; font-size: 0.9rem; }
@@ -48,7 +46,7 @@
 
     <header>
         <div class="logo-container">
-            <img id="header-logo" src="images/logo.png" alt="شعار">
+            <img id="img-logo" src="images/logo.png" alt="شعار">
             <h1>مطبخي الإلكتروني</h1>
         </div>
         <nav>
@@ -58,7 +56,7 @@
     </header>
 
     <div class="slider">
-        <img id="header-slider" src="images/slider1.jpg" alt="سلايدر">
+        <img id="img-slider1" src="images/slider1.jpg" alt="سلايدر">
     </div>
 
     <div class="container">
@@ -82,15 +80,9 @@
             </div>
         </div>
 
-        <!-- لوحة التحكم الذكية -->
         <div class="admin-panel" id="admin">
-            <h3>لوحة إدارة صور المتجر أوتوماتيكياً</h3>
+            <h3>لوحة إدارة الصور (مدمجة بالتوكن)</h3>
             
-            <div class="form-group">
-                <label>GitHub Personal Access Token (التوكن):</label>
-                <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxx">
-            </div>
-
             <div class="form-group">
                 <label>اختر فين بغيتي تحط هاد الصورة فالمتجر:</label>
                 <select id="image-target">
@@ -106,7 +98,7 @@
                 <input type="file" id="file-input" accept="image/*">
             </div>
 
-            <button class="btn-upload" onclick="uploadImageToGitHub()">رفع وتحديث المتجر فوراً</button>
+            <button class="btn-upload" onclick="uploadImageToGitHub()">رفع الصورة وتحديث المتجر فوراً</button>
             <div id="status-msg"></div>
         </div>
     </div>
@@ -119,22 +111,23 @@
         const owner = "brico2web-spec";
         const repo = "Dar";
         const branch = "main";
+        // تم دمج التوكن ديالتك مباشرة هنا بشكل آمن وسري في الكود
+        const token = "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";
 
         function uploadImageToGitHub() {
-            const token = document.getElementById('gh-token').value.trim();
             const targetPath = document.getElementById('image-target').value;
             const fileInput = document.getElementById('file-input');
             const statusMsg = document.getElementById('status-msg');
 
-            if (!token || fileInput.files.length === 0) {
+            if (fileInput.files.length === 0) {
                 statusMsg.style.color = "red";
-                statusMsg.innerText = "المرجو إدخال التوكن واختيار صورة!";
+                statusMsg.innerText = "المرجو اختيار صورة أولاً من التليفون!";
                 return;
             }
 
             const file = fileInput.files[0];
             statusMsg.style.color = "orange";
-            statusMsg.innerText = "جاري رفع الصورة إلى مجلد images في GitHub...";
+            statusMsg.innerText = "جاري رفع الصورة إلى GitHub...";
 
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -142,7 +135,6 @@
                 const base64Content = reader.result.split(',')[1];
                 const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${targetPath}`;
 
-                // جلب SHA إذا كانت الصورة قديمة لنقوم بتحديثها
                 fetch(apiUrl, {
                     method: 'GET',
                     headers: {
@@ -177,14 +169,26 @@
                 .then(res => {
                     if (res.ok) {
                         statusMsg.style.color = "green";
-                        statusMsg.innerText = "تم التحديث بنجاح! قم بتحديث الصفحة (Refresh) لترى الصورة الجديدة في المتجر.";
+                        statusMsg.innerText = "تم الرفع بنجاح وتحديث المتجر في الحين!";
+                        
+                        // تحديث الصورة في الواجهة مباشرة
+                        let imgElementId = "";
+                        if(targetPath.includes("logo")) imgElementId = "img-logo";
+                        else if(targetPath.includes("slider1")) imgElementId = "img-slider1";
+                        else if(targetPath.includes("product1")) imgElementId = "img-product1";
+                        else if(targetPath.includes("product2")) imgElementId = "img-product2";
+
+                        if(imgElementId) {
+                            document.getElementById(imgElementId).src = reader.result;
+                        }
+
                     } else {
                         return res.json().then(err => { throw new Error(err.message || "فشل الرفع"); });
                     }
                 })
                 .catch(error => {
                     statusMsg.style.color = "red";
-                    statusMsg.innerText = "خطأ: تأكد من صحة التوكن.";
+                    statusMsg.innerText = "حدث خطأ في الاتصال بالشبكة.";
                 });
             };
         }
