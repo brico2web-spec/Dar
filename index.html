@@ -70,10 +70,7 @@
             
             <!-- Dynamic Hero Slider -->
             <div class="relative rounded-3xl overflow-hidden shadow-2xl mb-10 bg-brandDark min-h-[320px] md:min-h-[400px] flex items-center">
-                <div id="heroSliderContainer" class="absolute inset-0 w-full h-full flex transition-transform duration-700 ease-in-out">
-                    <!-- Slider slides will be loaded dynamically -->
-                </div>
-                <!-- Slider Controls -->
+                <div id="heroSliderContainer" class="absolute inset-0 w-full h-full flex transition-transform duration-700 ease-in-out"></div>
                 <button onclick="prevSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition z-20">
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
@@ -84,12 +81,9 @@
 
             <!-- Categories Filter Bar -->
             <div class="flex items-center justify-between mb-8 flex-wrap gap-4 border-b border-gray-200 pb-4">
-                <div class="flex items-center gap-3">
-                    <h3 id="productsSection" class="text-2xl font-black text-brandDark flex items-center gap-2">
-                        <i class="fa-solid fa-utensils text-brandRed"></i> قائمة المأكولات والمنتجات
-                    </h3>
-                </div>
-                <!-- Search & Category Filters -->
+                <h3 id="productsSection" class="text-2xl font-black text-brandDark flex items-center gap-2">
+                    <i class="fa-solid fa-utensils text-brandRed"></i> قائمة المأكولات والمنتجات
+                </h3>
                 <div class="flex items-center gap-3 flex-wrap">
                     <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-2xl shadow-sm border border-gray-200">
                         <input type="text" id="searchInput" placeholder="ابحثي عن طبق أو منتج..." onkeyup="filterProducts()" class="text-sm outline-none bg-transparent w-44 md:w-56">
@@ -104,9 +98,7 @@
             </div>
 
             <!-- Products Grid -->
-            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- Loaded dynamically -->
-            </div>
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
         </div>
 
         <!-- ================= ADMIN TAB ================= -->
@@ -117,7 +109,7 @@
                         <h2 class="text-2xl font-black text-brandDark flex items-center gap-2">
                             <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم
                         </h2>
-                        <p class="text-sm text-gray-500">تعديل اللوغو، المأكولات، المنتجات، وصور السلايدر لتظهر في جميع الأجهزة</p>
+                        <p class="text-sm text-gray-500">إدارة المنتجات، السلايدر وشعار المتجر</p>
                     </div>
                     <div class="flex gap-2 flex-wrap">
                         <button onclick="switchAdminSubTab('products')" id="subTabProdBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow">إدارة المنتجات</button>
@@ -126,56 +118,50 @@
                     </div>
                 </div>
 
-                <!-- Products Management Section -->
+                <!-- Products Section -->
                 <div id="adminProductsSection">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-black text-brandDark">إضافة أو تعديل منتج / أكلة</h3>
                         <button onclick="resetProductForm()" class="text-xs font-bold bg-gray-100 px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-200">فرغ الحقول</button>
                     </div>
-
-                    <!-- Product Form -->
                     <form id="productForm" onsubmit="saveProduct(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8">
                         <input type="hidden" id="productId">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">اسم الأكلة / المنتج</label>
-                                <input type="text" id="pName" required placeholder="مثال: طاجين لحم بالبرقوق" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm">
+                                <input type="text" id="pName" required placeholder="مثال: طاجين لحم بالبرقوق" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">الثمن (درهم مغربي)</label>
-                                <input type="number" id="pPrice" required placeholder="مثال: 120" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm">
+                                <input type="number" id="pPrice" required placeholder="مثال: 120" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">القسم</label>
-                                <select id="pCategory" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm font-bold">
+                                <select id="pCategory" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm font-bold">
                                     <option value="food">مأكولات وأطباق</option>
                                     <option value="kitchen">أواني وأدوات المطبخ</option>
                                 </select>
                             </div>
                         </div>
-
-                        <!-- Image Upload Options -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">رابط الصورة (URL مباشر)</label>
-                                <input type="url" id="pImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">رابط الصورة (URL)</label>
+                                <input type="url" id="pImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">أو ارفع صورة من الجهاز</label>
-                                <input type="file" id="pImageFile" accept="image/*" onchange="convertImageFile(event, 'pImage')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
+                                <input type="file" id="pImageFile" accept="image/*" onchange="convertImageFile(event, 'pImage')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs">
                             </div>
                         </div>
-
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">وصف المأكولات / المكونات أو التفاصيل</label>
-                            <textarea id="pDesc" rows="2" required placeholder="مكونات الطبق أو مميزات المنتج..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm"></textarea>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">الوصف</label>
+                            <textarea id="pDesc" rows="2" required placeholder="المكونات أو المميزات..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm"></textarea>
                         </div>
-                        <div class="flex justify-end gap-3">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">حفظ ونشر على جميع الأجهزة</button>
+                        <div class="flex justify-end">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">حفظ ونشر</button>
                         </div>
                     </form>
 
-                    <!-- Products Table -->
                     <h3 class="text-lg font-black text-brandDark mb-4">قائمة العناصر الحالية</h3>
                     <div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white">
                         <table class="w-full text-right border-collapse">
@@ -195,85 +181,73 @@
                     </div>
                 </div>
 
-                <!-- Sliders Management Section -->
+                <!-- Sliders Section -->
                 <div id="adminSlidersSection" class="hidden">
-                    <h3 class="text-lg font-black text-brandDark mb-4">إضافة صورة جديدة للسلايدر المتحرك</h3>
+                    <h3 class="text-lg font-black text-brandDark mb-4">إضافة صورة جديدة للسلايدر</h3>
                     <form id="sliderForm" onsubmit="saveSlider(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">عنوان العرض أو الشعار</label>
-                                <input type="text" id="sTitle" required placeholder="مثال: عروض خاصة على المأكولات الطازجة" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">العنوان</label>
+                                <input type="text" id="sTitle" required placeholder="عروض خاصة..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">وصف مختصر</label>
-                                <input type="text" id="sSubtitle" required placeholder="مثال: اطلب الآن واستمتع بطعم لا يُقاوم" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">الوصف المختصر</label>
+                                <input type="text" id="sSubtitle" required placeholder="اطلب الآن..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">رابط صورة السلايدر (URL)</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">رابط الصورة</label>
                                 <input type="url" id="sImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">أو ارفع صورة السلايدر من الجهاز</label>
-                                <input type="file" id="sImageFile" accept="image/*" onchange="convertImageFile(event, 'sImage')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">أو ارفع صورة من الجهاز</label>
+                                <input type="file" id="sImageFile" accept="image/*" onchange="convertImageFile(event, 'sImage')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs">
                             </div>
                         </div>
                         <div class="flex justify-end">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">إضافة ونشر السلايدر</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow">إضافة السلايدر</button>
                         </div>
                     </form>
 
                     <h3 class="text-lg font-black text-brandDark mb-4">صور السلايدر الحالية</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="adminSlidersGrid">
-                        <!-- Loaded dynamically -->
-                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="adminSlidersGrid"></div>
                 </div>
 
-                <!-- Logo Management Section -->
+                <!-- Logo Section -->
                 <div id="adminLogoSection" class="hidden">
                     <h3 class="text-lg font-black text-brandDark mb-4">تغيير شعار المتجر (اللوغو)</h3>
                     <form id="logoForm" onsubmit="saveLogo(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8 max-w-xl">
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">رفع صورة اللوغو الجديدة من الجهاز</label>
-                            <input type="file" id="logoFile" accept="image/*" onchange="convertImageFile(event, 'logoUrlInput')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer" required>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">رفع شعار جديد من الجهاز</label>
+                            <input type="file" id="logoFile" accept="image/*" onchange="convertImageFile(event, 'logoUrlInput')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs" required>
                             <input type="hidden" id="logoUrlInput">
                         </div>
                         <div class="flex justify-end">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">تحديث ونشر اللوغو لجميع الأجهزة</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow">حفظ اللوغو وثبته</button>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
-
     </main>
 
     <!-- Cart Modal -->
     <div id="cartModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
             <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-                <h3 class="text-xl font-black text-brandDark flex items-center gap-2">
-                    <i class="fa-solid fa-shopping-bag text-brandRed"></i> سلة المشتريات
-                </h3>
-                <button onclick="closeCartModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <h3 class="text-xl font-black text-brandDark flex items-center gap-2"><i class="fa-solid fa-shopping-bag text-brandRed"></i> سلة المشتريات</h3>
+                <button onclick="closeCartModal()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center font-bold"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="cartItemsList" class="max-h-60 overflow-y-auto divide-y divide-gray-100 mb-4">
-                <p class="text-center text-gray-400 py-6">سلة المشتريات فارغة حالياً.</p>
-            </div>
-            <div class="border-t border-gray-100 pt-4 mb-4">
-                <div class="flex justify-between items-center text-lg font-black">
-                    <span>المجموع الكلي:</span>
-                    <span id="cartTotalPrice" class="text-brandRed">0 د.م</span>
-                </div>
+            <div id="cartItemsList" class="max-h-60 overflow-y-auto divide-y divide-gray-100 mb-4"><p class="text-center text-gray-400 py-6">السلة فارغة.</p></div>
+            <div class="border-t border-gray-100 pt-4 mb-4 flex justify-between items-center text-lg font-black">
+                <span>المجموع الكلي:</span>
+                <span id="cartTotalPrice" class="text-brandRed">0 د.م</span>
             </div>
             <div class="space-y-3">
-                <input type="text" id="clientName" placeholder="اسم الزبون الكريم" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed">
-                <input type="tel" id="clientPhone" placeholder="رقم الهاتف للتواصل" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed">
-                <textarea id="clientAddress" placeholder="عنوان التوصيل (المدينة، الحي...)" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-brandRed"></textarea>
+                <input type="text" id="clientName" placeholder="الاسم الكريم" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm">
+                <input type="tel" id="clientPhone" placeholder="رقم الهاتف" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm">
+                <textarea id="clientAddress" placeholder="عنوان التوصيل" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm"></textarea>
                 <button onclick="checkoutWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
                     <i class="fa-brands fa-whatsapp text-xl"></i> إتمام الطلب عبر واتساب
                 </button>
@@ -281,32 +255,31 @@
         </div>
     </div>
 
-    <!-- Product Details Modal -->
+    <!-- Product Modal -->
     <div id="productModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative">
-            <button onclick="closeProductModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center font-bold z-10">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+            <button onclick="closeProductModal()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center font-bold z-10"><i class="fa-solid fa-xmark"></i></button>
             <div id="productModalContent"></div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 py-6 mt-12 text-center text-xs text-gray-500 font-semibold">
         <p>جميع الحقوق محفوظة © 2026 <span class="text-brandRed font-bold">Mama's Table</span></p>
     </footer>
 
-    <!-- Firebase SDKs & Script (Real-time synchronization via Firestore) -->
+    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // إعدادات Firebase الخاصة بك (عوضها بمعلومات مشروعك)
+        // ==========================================
+        // ضع معلومات مشروعك الحقيقية هنا في الأسفل
+        // ==========================================
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "your-app.firebaseapp.com",
-            projectId: "your-app-id",
-            storageBucket: "your-app.appspot.com",
+            apiKey: "ضع_مفتاح_API_الخاص بك_هنا",
+            authDomain: "project-id.firebaseapp.com",
+            projectId: "project-id",
+            storageBucket: "project-id.appspot.com",
             messagingSenderId: "SENDER_ID",
             appId: "APP_ID"
         };
@@ -320,7 +293,13 @@
         let currentSlideIndex = 0;
         let slideInterval;
 
-        // تحويل صور الجهاز إلى Base64
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLogo = localStorage.getItem('mamas_table_logo');
+            if(savedLogo) {
+                document.getElementById('headerLogoImg').src = savedLogo;
+            }
+        });
+
         window.convertImageFile = function(event, targetInputId) {
             const file = event.target.files[0];
             if (!file) return;
@@ -370,9 +349,7 @@
             }
         }
 
-        // جلب البيانات ومتابعة التغييرات في الوقت الفعلي (Real-time Sync عبر Firestore)
         function initRealtimeListeners() {
-            // الاستماع للمنتجات
             onSnapshot(collection(db, "products"), (snapshot) => {
                 products = [];
                 snapshot.forEach(d => products.push({ id: d.id, ...d.data() }));
@@ -380,24 +357,14 @@
                 renderAdminTable();
             });
 
-            // الاستماع للسلايدر
             onSnapshot(collection(db, "sliders"), (snapshot) => {
                 sliders = [];
                 snapshot.forEach(d => sliders.push({ id: d.id, ...d.data() }));
                 renderSlider();
                 renderAdminSliders();
             });
-
-            // الاستماع للإعدادات (اللوغو)
-            onSnapshot(doc(db, "settings", "mainLogo"), (docSnap) => {
-                if(docSnap.exists() && docSnap.data().url) {
-                    const logoUrl = docSnap.data().url;
-                    document.getElementById('headerLogoImg').src = logoUrl;
-                }
-            });
         }
 
-        // إعداد السلايدر المتحرك
         window.renderSlider = function() {
             const container = document.getElementById('heroSliderContainer');
             if(!sliders || sliders.length === 0) {
@@ -421,9 +388,7 @@
 
         window.updateSliderPosition = function() {
             const container = document.getElementById('heroSliderContainer');
-            if(container) {
-                container.style.transform = `translateX(${currentSlideIndex * 100}%)`;
-            }
+            if(container) { container.style.transform = `translateX(${currentSlideIndex * 100}%)`; }
         }
 
         window.nextSlide = function() {
@@ -443,18 +408,12 @@
             slideInterval = setInterval(() => { nextSlide(); }, 5000);
         }
 
-        function stopSliderAutoPlay() {
-            if(slideInterval) clearInterval(slideInterval);
-        }
+        function stopSliderAutoPlay() { if(slideInterval) clearInterval(slideInterval); }
 
-        // عرض منتجات المتجر والفلترة
         window.renderStoreProducts = function() {
             const grid = document.getElementById('productsGrid');
-            const searchInputEl = document.getElementById('searchInput');
-            const categoryFilterEl = document.getElementById('categoryFilter');
-            
-            const search = searchInputEl ? searchInputEl.value.toLowerCase() : '';
-            const cat = categoryFilterEl ? categoryFilterEl.value : 'all';
+            const search = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
+            const cat = document.getElementById('categoryFilter') ? document.getElementById('categoryFilter').value : 'all';
 
             const filtered = products.filter(p => {
                 const matchSearch = p.name.toLowerCase().includes(search) || (p.desc && p.desc.toLowerCase().includes(search));
@@ -491,7 +450,6 @@
 
         window.filterProducts = function() { renderStoreProducts(); }
 
-        // عمليات الإدارة (CRUD للمنتجات)
         window.renderAdminTable = function() {
             const tbody = document.getElementById('adminProductsTable');
             if(!tbody) return;
@@ -506,8 +464,8 @@
                     <td class="p-4 font-semibold text-gray-600">${p.category === 'food' ? 'مأكولات' : 'أواني مطبخ'}</td>
                     <td class="p-4 font-black text-brandRed">${p.price} د.م</td>
                     <td class="p-4 text-center space-x-2 space-x-reverse">
-                        <button onclick="editProduct('${p.id}')" class="bg-amber-100 text-amber-900 p-2 rounded-xl text-xs font-bold hover:bg-amber-200 transition"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteProductItem('${p.id}')" class="bg-red-100 text-red-700 p-2 rounded-xl text-xs font-bold hover:bg-red-200 transition"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="editProduct('${p.id}')" class="bg-amber-100 text-amber-900 p-2 rounded-xl text-xs font-bold hover:bg-amber-200"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteProductItem('${p.id}')" class="bg-red-100 text-red-700 p-2 rounded-xl text-xs font-bold hover:bg-red-200"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -523,19 +481,12 @@
             const desc = document.getElementById('pDesc').value;
 
             const data = { name, price, category, image, desc };
-
             try {
-                if(id) {
-                    await updateDoc(doc(db, "products", id), data);
-                } else {
-                    await addDoc(collection(db, "products"), data);
-                }
+                if(id) { await updateDoc(doc(db, "products", id), data); } 
+                else { await addDoc(collection(db, "products"), data); }
                 resetProductForm();
-                alert('تم حفظ ونشر المنتج بنجاح في جميع الأجهزة!');
-            } catch(err) {
-                console.error(err);
-                alert('تعذر الحفظ، تأكد من اتصال الإنترنت وقاعدة البيانات.');
-            }
+                alert('تم الحفظ بنجاح!');
+            } catch(err) { alert('تعذر الحفظ.'); }
         }
 
         window.editProduct = function(id) {
@@ -551,13 +502,7 @@
         }
 
         window.deleteProductItem = async function(id) {
-            if(confirm('هل أنت متأكد من حذف هذا العنصر؟')) {
-                try {
-                    await deleteDoc(doc(db, "products", id));
-                } catch(err) {
-                    alert('تعذر الحذف.');
-                }
-            }
+            if(confirm('متأكد من الحذف؟')) { await deleteDoc(doc(db, "products", id)); }
         }
 
         window.resetProductForm = function() {
@@ -565,21 +510,15 @@
             document.getElementById('productId').value = '';
         }
 
-        // إدارة السلايدر
         window.renderAdminSliders = function() {
             const grid = document.getElementById('adminSlidersGrid');
             if(!grid) return;
-            if(sliders.length === 0) {
-                grid.innerHTML = '<p class="text-gray-400 text-sm">لا توجد صور سلايدر.</p>';
-                return;
-            }
+            if(sliders.length === 0) { grid.innerHTML = '<p class="text-gray-400 text-sm">لا توجد صور سلايدر.</p>'; return; }
             grid.innerHTML = sliders.map(s => `
                 <div class="bg-white rounded-2xl p-3 border border-gray-200 shadow-sm flex flex-col justify-between">
-                    <div class="w-full h-32 rounded-xl overflow-hidden mb-2">
-                        <img src="${s.image}" class="w-full h-full object-cover">
-                    </div>
+                    <div class="w-full h-32 rounded-xl overflow-hidden mb-2"><img src="${s.image}" class="w-full h-full object-cover"></div>
                     <h5 class="font-bold text-xs text-brandDark mb-1">${s.title}</h5>
-                    <button onclick="deleteSlider('${s.id}')" class="bg-red-100 text-red-700 py-1.5 rounded-xl text-xs font-bold hover:bg-red-200 transition">حذف الصورة</button>
+                    <button onclick="deleteSlider('${s.id}')" class="bg-red-100 text-red-700 py-1.5 rounded-xl text-xs font-bold">حذف</button>
                 </div>
             `).join('');
         }
@@ -589,83 +528,54 @@
             const title = document.getElementById('sTitle').value;
             const subtitle = document.getElementById('sSubtitle').value;
             const image = document.getElementById('sImage').value;
-
-            if(!image) {
-                alert('المرجو إدخال رابط أو اختيار صورة للسلايدر!');
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "sliders"), { title, subtitle, image });
-                document.getElementById('sliderForm').reset();
-                alert('تمت إضافة السلايدر ونشره بنجاح!');
-            } catch(e) {
-                alert('تعذر الحفظ.');
-            }
+            if(!image) { alert('المرجو إدخال صورة السلايدر!'); return; }
+            await addDoc(collection(db, "sliders"), { title, subtitle, image });
+            document.getElementById('sliderForm').reset();
+            alert('تمت إضافة السلايدر!');
         }
 
-        window.deleteSlider = async function(id) {
-            if(confirm('حذف هذه الصورة من السلايدر؟')) {
-                try {
-                    await deleteDoc(doc(db, "sliders", id));
-                } catch(e) {
-                    alert('تعذر الحذف.');
-                }
-            }
-        }
+        window.deleteSlider = async function(id) { await deleteDoc(doc(db, "sliders", id)); }
 
-        // إدارة اللوغو
-        window.saveLogo = async function(e) {
+        window.saveLogo = function(e) {
             e.preventDefault();
             const logoUrl = document.getElementById('logoUrlInput').value;
-            if(!logoUrl) {
-                alert('المرجو اختيار صورة اللوغو أولاً!');
-                return;
-            }
-            try {
-                await setDoc(doc(db, "settings", "mainLogo"), { url: logoUrl });
-                alert('تم تحديث شعار المتجر بنجاح وسيظهر في جميع الأجهزة!');
-            } catch(err) {
-                alert('تعذر تحديث اللوغو.');
-            }
+            if(!logoUrl) { alert('اختر صورة الشعار أولاً!'); return; }
+            
+            localStorage.setItem('mamas_table_logo', logoUrl);
+            document.getElementById('headerLogoImg').src = logoUrl;
+            alert('تم تحديث اللوغو وثباته بنجاح!');
         }
 
-        // السلة وإتمام الطلب
         window.addToCart = function(id) {
             const p = products.find(item => item.id === id);
             if(!p) return;
             const existing = cart.find(item => item.id === id);
             if(existing) { existing.qty += 1; } else { cart.push({ ...p, qty: 1 }); }
             updateCartUI();
-            alert('تمت الإضافة إلى السلة!');
+            alert('تمت الإضافة للسلة!');
         }
 
         window.updateCartUI = function() {
             const count = cart.reduce((sum, item) => sum + item.qty, 0);
             document.getElementById('cartCount').innerText = count;
-
             const list = document.getElementById('cartItemsList');
             if(cart.length === 0) {
-                list.innerHTML = '<p class="text-center text-gray-400 py-6">سلة المشتريات فارغة حالياً.</p>';
+                list.innerHTML = '<p class="text-center text-gray-400 py-6">السلة فارغة.</p>';
                 document.getElementById('cartTotalPrice').innerText = '0 د.م';
                 return;
             }
-
             let total = 0;
             list.innerHTML = cart.map(item => {
                 total += item.price * item.qty;
                 return `
                     <div class="py-3 flex justify-between items-center text-sm">
                         <div class="flex items-center gap-3">
-                            <img src="${item.image}" class="w-10 h-10 rounded-xl object-cover shadow-sm">
-                            <div>
-                                <h5 class="font-bold text-brandDark">${item.name}</h5>
-                                <span class="text-xs text-gray-500">${item.price} د.م × ${item.qty}</span>
-                            </div>
+                            <img src="${item.image}" class="w-10 h-10 rounded-xl object-cover">
+                            <div><h5 class="font-bold text-brandDark">${item.name}</h5><span class="text-xs text-gray-500">${item.price} د.م × ${item.qty}</span></div>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="font-black text-brandRed">${item.price * item.qty} د.م</span>
-                            <button onclick="removeFromCart('${item.id}')" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="removeFromCart('${item.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `;
@@ -673,11 +583,7 @@
             document.getElementById('cartTotalPrice').innerText = total + ' د.م';
         }
 
-        window.removeFromCart = function(id) {
-            cart = cart.filter(item => item.id !== id);
-            updateCartUI();
-        }
-
+        window.removeFromCart = function(id) { cart = cart.filter(item => item.id !== id); updateCartUI(); }
         window.openCartModal = function() { document.getElementById('cartModal').classList.remove('hidden'); }
         window.closeCartModal = function() { document.getElementById('cartModal').classList.add('hidden'); }
 
@@ -685,53 +591,33 @@
             const p = products.find(item => item.id === id);
             if(!p) return;
             document.getElementById('productModalContent').innerHTML = `
-                <div class="w-full h-64 rounded-2xl overflow-hidden mb-4 bg-gray-50 shadow-inner">
-                    <img src="${p.image}" class="w-full h-full object-cover">
-                </div>
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-xl font-black text-brandDark">${p.name}</h3>
-                    <span class="bg-amber-100 text-brandDark font-bold text-xs px-3 py-1 rounded-full">${p.category === 'food' ? 'مأكولات' : 'أواني مطبخ'}</span>
-                </div>
+                <div class="w-full h-64 rounded-2xl overflow-hidden mb-4"><img src="${p.image}" class="w-full h-full object-cover"></div>
+                <h3 class="text-xl font-black text-brandDark mb-2">${p.name}</h3>
                 <p class="text-brandRed font-black text-2xl mb-3">${p.price} د.م</p>
-                <p class="text-gray-600 text-sm mb-6 leading-relaxed">${p.desc || ''}</p>
-                <button onclick="addToCart('${p.id}'); closeProductModal();" class="w-full bg-brandRed hover:bg-red-700 text-white font-black py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-cart-plus"></i> أضف للسلة الآن
-                </button>
+                <p class="text-gray-600 text-sm mb-6">${p.desc || ''}</p>
+                <button onclick="addToCart('${p.id}'); closeProductModal();" class="w-full bg-brandRed text-white font-black py-3 rounded-xl shadow-lg">أضف للسلة الآن</button>
             `;
             document.getElementById('productModal').classList.remove('hidden');
         }
-
         window.closeProductModal = function() { document.getElementById('productModal').classList.add('hidden'); }
 
         window.checkoutWhatsApp = function() {
-            if(cart.length === 0) { alert('سلة المشتريات فارغة!'); return; }
+            if(cart.length === 0) { alert('السلة فارغة!'); return; }
             const name = document.getElementById('clientName').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
             const address = document.getElementById('clientAddress').value.trim();
+            if(!name || !phone || !address) { alert('أدخل الاسم، الهاتف والعنوان.'); return; }
 
-            if(!name || !phone || !address) {
-                alert('المرجو إدخال الاسم، رقم الهاتف وعنوان التوصيل لإتمام الطلب.');
-                return;
-            }
-
-            let msg = `*طلب جديد من متجر Mama's Table*%0A%0A`;
-            msg += `👤 *الاسم:* ${name}%0A`;
-            msg += `📞 *الهاتف:* ${phone}%0A`;
-            msg += `📍 *العنوان:* ${address}%0A%0A`;
-            msg += `🛒 *الطلبات:*%0A`;
-
+            let msg = `*طلب جديد من Mama's Table*%0A👤 الاسم: ${name}%0A📞 الهاتف: ${phone}%0A📍 العنوان: ${address}%0A%0A🛒 الطلبات:%0A`;
             let total = 0;
             cart.forEach(item => {
                 msg += `- ${item.name} (${item.qty}x) : ${item.price * item.qty} د.م%0A`;
                 total += item.price * item.qty;
             });
-            msg += `%0A💰 *المجموع الكلي:* ${total} د.م`;
-
-            const whatsappNumber = "212600000000"; // استبدل برقم الواتساب الخاص بك
-            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+            msg += `%0A💰 المجموع: ${total} د.م`;
+            window.open(`https://wa.me/212600000000?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // تشغيل نظام الاستماع الفوري عند فتح الصفحة
         initRealtimeListeners();
         startSliderAutoPlay();
     </script>
