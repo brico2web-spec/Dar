@@ -38,7 +38,7 @@
             <!-- Logo & Title -->
             <div class="flex items-center space-x-3 space-x-reverse cursor-pointer group" onclick="switchTab('store')">
                 <div class="w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-brandYellow shadow-md flex items-center justify-center bg-amber-50 group-hover:scale-105 transition">
-                    <img id="headerLogoImg" src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=300&q=80" alt="Mama's Table Logo" class="w-full h-full object-cover">
+                    <img id="headerLogoImg" src="images/logo.png" alt="Mama's Table Logo" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=300&q=80'">
                 </div>
                 <div>
                     <h1 class="text-xl md:text-2xl font-black text-brandRed tracking-wide leading-none">Mama's Table</h1>
@@ -115,45 +115,14 @@
                 <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100 flex-wrap gap-4">
                     <div>
                         <h2 class="text-2xl font-black text-brandDark flex items-center gap-2">
-                            <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم
+                            <i class="fa-solid fa-gauge-high text-brandRed"></i> لوحة الإدارة والتحكم (مربوطة بـ GitHub تلقائياً)
                         </h2>
-                        <p class="text-sm text-gray-500">تعديل اللوغو، المأكولات، المنتجات، وصور السلايدر وربط رفع الصور بـ GitHub</p>
+                        <p class="text-sm text-gray-500">ارفع الصور وسوف تُحفظ أوتوماتيكياً في مساراتها الصحيحة على مستودع GitHub</p>
                     </div>
                     <div class="flex gap-2 flex-wrap">
                         <button onclick="switchAdminSubTab('products')" id="subTabProdBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow">إدارة المنتجات</button>
                         <button onclick="switchAdminSubTab('sliders')" id="subTabSlideBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">إدارة السلايدر</button>
                         <button onclick="switchAdminSubTab('logo')" id="subTabLogoBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200">تغيير اللوغو</button>
-                        <button onclick="switchAdminSubTab('github')" id="subTabGithubBtn" class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200"><i class="fa-brands fa-github"></i> إعدادات GitHub</button>
-                    </div>
-                </div>
-
-                <!-- GitHub Settings Section -->
-                <div id="adminGithubSection" class="hidden">
-                    <h3 class="text-lg font-black text-brandDark mb-2">إعدادات ربط رفع الصور بـ GitHub</h3>
-                    <p class="text-xs text-gray-500 mb-6">أدخل بيانات مستودع GitHub الخاص بك ورمز التوثيق (Personal Access Token) لكي يتم حفظ الصور مباشرة ورفعها للموقع.</p>
-                    <div class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8 max-w-2xl">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">اسم مستخدم GitHub</label>
-                                <input type="text" id="ghUser" placeholder="مثال: nezar" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">اسم المستودع (Repository Name)</label>
-                                <input type="text" id="ghRepo" placeholder="مثال: mamas-table-images" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">الفرع (Branch)</label>
-                            <input type="text" id="ghBranch" value="main" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">رمز التوثيق الشخصي (GitHub Personal Access Token - PAT)</label>
-                            <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
-                            <p class="text-[11px] text-gray-400 mt-1">يجب أن يحتوي الرمز على صلاحية (repo) أو (public_repo) لرفع الملفات.</p>
-                        </div>
-                        <div class="flex justify-end">
-                            <button type="button" onclick="saveGithubSettings()" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-brandRed text-white shadow hover:bg-red-700 transition">حفظ إعدادات GitHub</button>
-                        </div>
                     </div>
                 </div>
 
@@ -192,8 +161,8 @@
                                 <input type="url" id="pImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-brandRed focus:outline-none bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">أو ارفع صورة من الجهاز (ترفع تلقائياً لـ GitHub)</label>
-                                <input type="file" id="pImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'pImage')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة المنتج من التليفون (ترفع أوتوماتيكياً)</label>
+                                <input type="file" id="pImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'pImage', 'product')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
                             </div>
                         </div>
 
@@ -246,8 +215,8 @@
                                 <input type="url" id="sImage" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">أو ارفع صورة السلايدر من الجهاز (GitHub)</label>
-                                <input type="file" id="sImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'sImage')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة السلايدر من التليفون (ترفع أوتوماتيكياً)</label>
+                                <input type="file" id="sImageFile" accept="image/*" onchange="uploadImageToGithub(event, 'sImage', 'slider')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer">
                             </div>
                         </div>
                         <div class="flex justify-end">
@@ -266,8 +235,8 @@
                     <h3 class="text-lg font-black text-brandDark mb-4">تغيير شعار المتجر (اللوغو)</h3>
                     <form id="logoForm" onsubmit="saveLogo(event)" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-200/60 mb-8 max-w-xl">
                         <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-700 mb-1">رفع صورة اللوغو الجديدة من الجهاز (GitHub)</label>
-                            <input type="file" id="logoFile" accept="image/*" onchange="uploadImageToGithub(event, 'logoUrlInput')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer" required>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">اختر صورة اللوغو الجديدة من التليفون (تُحفظ كـ images/logo.png)</label>
+                            <input type="file" id="logoFile" accept="image/*" onchange="uploadImageToGithub(event, 'logoUrlInput', 'logo')" class="w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brandRed file:text-white cursor-pointer" required>
                             <input type="hidden" id="logoUrlInput">
                         </div>
                         <div class="flex justify-end">
@@ -327,12 +296,11 @@
         <p>جميع الحقوق محفوظة © 2026 <span class="text-brandRed font-bold">Mama's Table</span></p>
     </footer>
 
-    <!-- Firebase SDKs & Script (Real-time synchronization via Firestore) -->
+    <!-- Firebase SDKs & Script (Global Scope Fixed) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "your-app.firebaseapp.com",
@@ -345,98 +313,85 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        const ghUser = "brico2web";
+        const ghRepo = "Dar";
+        const ghBranch = "main";
+        const ghToken = "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";
+
         let products = [];
         let sliders = [];
         let cart = [];
         let currentSlideIndex = 0;
         let slideInterval;
 
-        // استرجاع إعدادات GitHub المحفوظة مسبقاً عند تحميل الصفحة
-        window.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('ghUser').value = localStorage.getItem('gh_user') || '';
-            document.getElementById('ghRepo').value = localStorage.getItem('gh_repo') || '';
-            document.getElementById('ghBranch').value = localStorage.getItem('gh_branch') || 'main';
-            document.getElementById('ghToken').value = localStorage.getItem('gh_token') || '';
-        });
-
-        window.saveGithubSettings = function() {
-            const user = document.getElementById('ghUser').value.trim();
-            const repo = document.getElementById('ghRepo').value.trim();
-            const branch = document.getElementById('ghBranch').value.trim() || 'main';
-            const token = document.getElementById('ghToken').value.trim();
-
-            if(!user || !repo || !token) {
-                alert('المرجو تعبئة اسم المستخدم، المستودع ورمز التوثيق (Token) بشكل صحيح!');
-                return;
-            }
-
-            localStorage.setItem('gh_user', user);
-            localStorage.setItem('gh_repo', repo);
-            localStorage.setItem('gh_branch', branch);
-            localStorage.setItem('gh_token', token);
-
-            alert('تم حفظ إعدادات GitHub بنجاح!');
-        }
-
-        // دالة رفع الصورة إلى GitHub وتوليد رابط Raw مباشر
-        window.uploadImageToGithub = async function(event, targetInputId) {
+        window.uploadImageToGithub = async function(event, targetInputId, type) {
             const file = event.target.files[0];
             if (!file) return;
 
-            const user = localStorage.getItem('gh_user');
-            const repo = localStorage.getItem('gh_repo');
-            const branch = localStorage.getItem('gh_branch') || 'main';
-            const token = localStorage.getItem('gh_token');
-
-            if(!user || !repo || !token) {
-                alert('المرجو إدخال وحفظ إعدادات GitHub (User, Repo, Token) أولاً في قسم إعدادات GitHub!');
-                event.target.value = '';
-                return;
-            }
-
-            // تحويل الملف إلى Base64
             const reader = new FileReader();
             reader.onload = async function(uploadEvent) {
                 const base64Content = uploadEvent.target.result.split(',')[1];
-                const fileName = `img_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
-                const path = `uploads/${fileName}`;
+                
+                let filePath = "";
+                if(type === 'logo') {
+                    filePath = "images/logo.png";
+                } else if(type === 'slider') {
+                    filePath = `images/slider_${Date.now()}.jpg`;
+                } else {
+                    filePath = `images/product_${Date.now()}.jpg`;
+                }
 
-                const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
+                const apiUrl = `https://api.github.com/repos/${ghUser}/${ghRepo}/contents/${filePath}`;
 
-                const data = {
-                    message: `Upload image ${fileName} via Mama's Table Admin`,
+                let fileSha = null;
+                try {
+                    const checkRes = await fetch(apiUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `token ${ghToken}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    if(checkRes.ok) {
+                        const fileData = await checkRes.json();
+                        fileSha = fileData.sha;
+                    }
+                } catch(e) {}
+
+                const requestBody = {
+                    message: `Auto upload ${filePath} via Mama's Table`,
                     content: base64Content,
-                    branch: branch
+                    branch: ghBranch
                 };
+                if(fileSha) {
+                    requestBody.sha = fileSha;
+                }
 
                 const uploadBtn = event.target;
                 uploadBtn.disabled = true;
-                const originalBg = uploadBtn.style.backgroundColor;
 
                 try {
-                    const response = await fetch(url, {
+                    const response = await fetch(apiUrl, {
                         method: 'PUT',
                         headers: {
-                            'Authorization': `token ${token}`,
+                            'Authorization': `token ${ghToken}`,
                             'Content-Type': 'application/json',
                             'Accept': 'application/vnd.github.v3+json'
                         },
-                        body: JSON.stringify(data)
+                        body: JSON.stringify(requestBody)
                     });
 
                     if(response.ok) {
-                        const result = await response.json();
-                        // الحصول على رابط Raw المباشر للصور على GitHub
-                        const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
+                        const rawUrl = `https://raw.githubusercontent.com/${ghUser}/${ghRepo}/${ghBranch}/${filePath}?t=${Date.now()}`;
                         document.getElementById(targetInputId).value = rawUrl;
-                        alert('تم رفع الصورة بنجاح إلى GitHub وتوليد الرابط المباشر!');
+                        alert('تم رفع الصورة أوتوماتيكياً وتثبيتها بنجاح على GitHub!');
                     } else {
                         const errData = await response.json();
-                        alert('فشل الرفع إلى GitHub: ' + (errData.message || 'تأكد من صحة Token واسم المستودع'));
+                        alert('فشل الرفع: ' + (errData.message || 'خطأ غير معروف'));
                     }
                 } catch(err) {
                     console.error(err);
-                    alert('حدث خطأ في الاتصال بـ GitHub.');
+                    alert('خطأ في الاتصال بشبكة الإنترنت.');
                 } finally {
                     uploadBtn.disabled = false;
                 }
@@ -467,12 +422,10 @@
             document.getElementById('adminProductsSection').classList.add('hidden');
             document.getElementById('adminSlidersSection').classList.add('hidden');
             document.getElementById('adminLogoSection').classList.add('hidden');
-            document.getElementById('adminGithubSection').classList.add('hidden');
             
             document.getElementById('subTabProdBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200";
             document.getElementById('subTabSlideBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200";
             document.getElementById('subTabLogoBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200";
-            document.getElementById('subTabGithubBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200";
 
             if(sub === 'products') {
                 document.getElementById('adminProductsSection').classList.remove('hidden');
@@ -483,13 +436,9 @@
             } else if(sub === 'logo') {
                 document.getElementById('adminLogoSection').classList.remove('hidden');
                 document.getElementById('subTabLogoBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
-            } else if(sub === 'github') {
-                document.getElementById('adminGithubSection').classList.remove('hidden');
-                document.getElementById('subTabGithubBtn').className = "px-4 py-2 rounded-xl text-xs font-bold bg-brandRed text-white shadow";
             }
         }
 
-        // جلب البيانات ومتابعة التغييرات في الوقت الفعلي (Real-time Sync عبر Firestore)
         function initRealtimeListeners() {
             onSnapshot(collection(db, "products"), (snapshot) => {
                 products = [];
@@ -513,7 +462,6 @@
             });
         }
 
-        // إعداد السلايدر المتحرك
         window.renderSlider = function() {
             const container = document.getElementById('heroSliderContainer');
             if(!sliders || sliders.length === 0) {
@@ -563,7 +511,6 @@
             if(slideInterval) clearInterval(slideInterval);
         }
 
-        // عرض منتجات المتجر والفلترة
         window.renderStoreProducts = function() {
             const grid = document.getElementById('productsGrid');
             const searchInputEl = document.getElementById('searchInput');
@@ -607,7 +554,6 @@
 
         window.filterProducts = function() { renderStoreProducts(); }
 
-        // عمليات الإدارة (CRUD للمنتجات)
         window.renderAdminTable = function() {
             const tbody = document.getElementById('adminProductsTable');
             if(!tbody) return;
@@ -650,7 +596,7 @@
                 alert('تم حفظ ونشر المنتج بنجاح في جميع الأجهزة!');
             } catch(err) {
                 console.error(err);
-                alert('تعذر الحفظ، تأكد من اتصال الإنترنت وقاعدة البيانات.');
+                alert('تعذر الحفظ.');
             }
         }
 
@@ -681,7 +627,6 @@
             document.getElementById('productId').value = '';
         }
 
-        // إدارة السلايدر
         window.renderAdminSliders = function() {
             const grid = document.getElementById('adminSlidersGrid');
             if(!grid) return;
@@ -730,7 +675,6 @@
             }
         }
 
-        // إدارة اللوغو
         window.saveLogo = async function(e) {
             e.preventDefault();
             const logoUrl = document.getElementById('logoUrlInput').value;
@@ -746,7 +690,6 @@
             }
         }
 
-        // السلة وإتمام الطلب
         window.addToCart = function(id) {
             const p = products.find(item => item.id === id);
             if(!p) return;
@@ -843,11 +786,10 @@
             });
             msg += `%0A💰 *المجموع الكلي:* ${total} د.م`;
 
-            const whatsappNumber = "212600000000"; // استبدل برقم الواتساب الخاص بك
+            const whatsappNumber = "212600000000";
             window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // تشغيل نظام الاستماع الفوري عند فتح الصفحة
         initRealtimeListeners();
         startSliderAutoPlay();
     </script>
