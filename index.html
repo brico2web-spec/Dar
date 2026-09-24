@@ -442,7 +442,7 @@
         const ghUser = "brico2web";
         const ghRepo = "Dar";
         const ghBranch = "main";
-        // التوكن الجديد المدمج أوتوماتيكياً
+        // التوكن المحدث والمضبوط خصيصاً لمستودعك على GitHub
         const ghToken = "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";
 
         let products = JSON.parse(localStorage.getItem('mamas_products')) || [];
@@ -468,7 +468,6 @@
         let slideInterval;
 
         window.onload = function() {
-            // إخفاء شاشة التحميل بعد 5 ثواني
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
                 if(splash) {
