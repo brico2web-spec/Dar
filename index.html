@@ -189,10 +189,16 @@
     .product-photo { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: #e6ddd3; }
     .product-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
     .product:hover .product-photo img { transform: scale(1.055); }
+    .product-gallery { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin-top: 7px; }
+    .product-gallery button { overflow: hidden; padding: 0; aspect-ratio: 1; border: 1px solid transparent; background: #e6ddd3; cursor: pointer; }
+    .product-gallery button.active { border-color: var(--rose-dark); }
+    .product-gallery img { width: 100%; height: 100%; object-fit: cover; }
     .product-tag { position: absolute; top: 12px; right: 12px; padding: 5px 11px; border-radius: 2px; color: var(--ink); background: rgba(255,253,250,.9); font-size: .76rem; }
     .product-info { padding: 14px 2px 0; }
     .product-info small { color: var(--rose-dark); font-size: .76rem; font-weight: 700; }
     .product-info h3 { margin: 5px 0 12px; font-size: 1.12rem; }
+    .product-price { margin: -4px 0 10px; color: var(--rose-dark); font-size: 1.02rem; font-weight: 800; }
+    .product-price.on-request { color: var(--muted); font-size: .88rem; font-weight: 600; }
     .product-link { display: inline-flex; align-items: center; gap: 7px; color: #5b554d; font-size: .88rem; font-weight: 700; }
     .product-link:hover { color: var(--rose-dark); }
     .product-whatsapp { margin-top: 5px; color: #198754; }
@@ -270,13 +276,15 @@
     .admin-color-field code { color: #737985; direction: ltr; }
     .admin-images { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
     .admin-category-list { display: grid; gap: 14px; }
-    .admin-category-card { display: grid; grid-template-columns: 180px minmax(0, 1fr) auto; align-items: start; gap: 16px; padding: 14px; border: 1px solid #e4e6ea; border-radius: 6px; background: #fcfcfd; }
-    .admin-category-card > img { width: 180px; height: 190px; border-radius: 4px; object-fit: cover; background: #eee9e2; }
+    .admin-category-card { display: grid; gap: 14px; padding: 14px; border: 1px solid #e4e6ea; border-radius: 6px; background: #fcfcfd; }
+    .admin-category-gallery { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    .admin-category-gallery img { width: 100%; height: 150px; border-radius: 4px; object-fit: cover; background: #eee9e2; }
     .admin-category-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .admin-category-fields .admin-field { font-size: .83rem; }
     .admin-category-fields .admin-field input,
     .admin-category-fields select { min-height: 39px; padding: 7px 9px; font-size: .88rem; }
-    .admin-category-tools { display: grid; gap: 8px; }
+    .admin-category-tools { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; }
+    .admin-category-image-control { display: grid; gap: 5px; min-width: 0; color: #555b66; font-size: .78rem; }
     .admin-category-tools select,
     .admin-category-tools input { width: 100%; max-width: 230px; min-height: 39px; padding: 6px; border: 1px solid #d5d9df; border-radius: 4px; background: white; font: .83rem var(--sans); }
     .admin-category-tools .admin-button { color: #a12929; border-color: #e3c9c9; }
@@ -365,8 +373,9 @@
       .admin-button { min-height: 37px; padding: 6px 10px; font-size: .83rem; }
       .admin-body { width: calc(100% - 26px); margin-top: 22px; }
       .admin-fields, .admin-images { grid-template-columns: 1fr; }
-      .admin-category-card { grid-template-columns: 1fr; }
-      .admin-category-card > img { width: 100%; height: 260px; }
+      .admin-category-gallery { gap: 5px; }
+      .admin-category-gallery img { height: 75px; }
+      .admin-category-tools { grid-template-columns: 1fr; }
       .admin-category-fields { grid-template-columns: 1fr; }
       .admin-category-tools select,
       .admin-category-tools input { max-width: none; }
@@ -652,10 +661,10 @@
       ["whatsapp", "رقم واتساب (مثال: 2126XXXXXXXX)", "tel"]
     ];
     const defaultCategories = [
-      { id: "khimar", name: "خمار", subtitle: "راحة وأناقة", title: "إطلالة الخمار", image: "images/01.jpeg" },
-      { id: "hijab", name: "حجاب", subtitle: "لمسة ناعمة", title: "إطلالة الحجاب", image: "images/02.jpeg" },
-      { id: "niqab", name: "نقاب", subtitle: "بساطة كلاسيكية", title: "إطلالة النقاب", image: "images/03.jpeg" },
-      { id: "foulard", name: "فولار", subtitle: "ألوان كتفرّح", title: "إطلالة الفولار", image: "images/04.jpeg" }
+      { id: "khimar", name: "خمار", subtitle: "راحة وأناقة", title: "إطلالة الخمار", price: null, images: ["images/01.jpeg", "images/02.jpeg", "images/03.jpeg", "images/04.jpeg", "images/05.jpeg"] },
+      { id: "hijab", name: "حجاب", subtitle: "لمسة ناعمة", title: "إطلالة الحجاب", price: null, images: ["images/02.jpeg", "images/03.jpeg", "images/04.jpeg", "images/05.jpeg", "images/06.jpeg"] },
+      { id: "niqab", name: "نقاب", subtitle: "بساطة كلاسيكية", title: "إطلالة النقاب", price: null, images: ["images/03.jpeg", "images/04.jpeg", "images/05.jpeg", "images/06.jpeg", "images/07.jpeg"] },
+      { id: "foulard", name: "فولار", subtitle: "ألوان كتفرّح", title: "إطلالة الفولار", price: null, images: ["images/04.jpeg", "images/05.jpeg", "images/06.jpeg", "images/07.jpeg", "images/08.jpeg"] }
     ];
     const whatsappProductCta = "طلبي عبر واتساب";
     const dataKeys = contentGroups.flatMap((group) => group.fields.map(([key]) => key));
@@ -734,7 +743,7 @@
         if (!category || typeof category !== "object" || Array.isArray(category)) {
           throw new Error("معلومات شي قسم ماشي صحيحة.");
         }
-        const { id, name, subtitle, title, image } = category;
+        const { id, name, subtitle, title } = category;
         if (typeof id !== "string" || !/^[a-z0-9-]{1,48}$/.test(id) || categoryIds.has(id)) {
           throw new Error("معرّف قسم غير صحيح أو مكرر.");
         }
@@ -748,10 +757,21 @@
             throw new Error(`${label} خاصو يكون مكتوب وما يفوتش ${maxLength} حرف.`);
           }
         }
-        const validImage = availableImages.includes(image) ||
-          (typeof image === "string" && /^data:image\/(jpeg|png|webp);base64,[a-z0-9+/]+=*$/i.test(image));
-        if (!validImage) throw new Error(`صورة القسم "${name}" ماشي صحيحة.`);
-        return { id, name: name.trim(), subtitle: subtitle.trim(), title: title.trim(), image };
+        const fallback = defaultCategories.find((item) => item.id === id) || defaultCategories[0];
+        const categoryImages = Array.isArray(category.images)
+          ? category.images
+          : [category.image, ...fallback.images.slice(1)];
+        if (categoryImages.length !== 5) throw new Error(`خاص القسم "${name}" يكون عندو خمس صور بالضبط.`);
+        for (const image of categoryImages) {
+          const validImage = availableImages.includes(image) ||
+            (typeof image === "string" && /^data:image\/(jpeg|png|webp);base64,[a-z0-9+/]+=*$/i.test(image));
+          if (!validImage) throw new Error(`شي صورة فالقسم "${name}" ماشي صحيحة.`);
+        }
+        const price = category.price ?? null;
+        if (price !== null && (typeof price !== "number" || !Number.isFinite(price) || price < 0 || price > 1000000 || Math.round(price * 100) / 100 !== price)) {
+          throw new Error(`الثمن ديال "${name}" خاصو يكون من 0 حتى مليون درهم وبجوج أرقام عشرية كحد أقصى.`);
+        }
+        return { id, name: name.trim(), subtitle: subtitle.trim(), title: title.trim(), price, images: categoryImages };
       });
       return checked;
     }
@@ -764,7 +784,11 @@
           name: value.content?.[`product${number}Tag`] || category.name,
           subtitle: value.content?.[`product${number}Subtitle`] || category.subtitle,
           title: value.content?.[`product${number}Title`] || category.title,
-          image: value.images?.[`product${number}`] || category.image
+          images: [
+            value.images?.[`product${number}`] || category.images[0],
+            ...category.images.slice(1)
+          ],
+          price: null
         };
       });
     }
@@ -806,7 +830,7 @@
         const photo = document.createElement("div");
         photo.className = "product-photo";
         const image = document.createElement("img");
-        image.src = category.image;
+        image.src = category.images[0];
         image.alt = category.title;
         image.loading = "lazy";
         const tag = document.createElement("span");
@@ -814,12 +838,42 @@
         tag.textContent = category.name;
         photo.append(image, tag);
 
+        const gallery = document.createElement("div");
+        gallery.className = "product-gallery";
+        gallery.setAttribute("aria-label", `صور ${category.title}`);
+        category.images.forEach((source, index) => {
+          const thumbnail = document.createElement("button");
+          thumbnail.type = "button";
+          thumbnail.classList.toggle("active", index === 0);
+          thumbnail.setAttribute("aria-label", `عرض الصورة ${index + 1} من ${category.title}`);
+          thumbnail.setAttribute("aria-pressed", String(index === 0));
+          const thumbnailImage = document.createElement("img");
+          thumbnailImage.src = source;
+          thumbnailImage.alt = "";
+          thumbnailImage.loading = "lazy";
+          thumbnail.append(thumbnailImage);
+          thumbnail.addEventListener("click", () => {
+            image.src = source;
+            gallery.querySelectorAll("button").forEach((button, buttonIndex) => {
+              const selected = buttonIndex === index;
+              button.classList.toggle("active", selected);
+              button.setAttribute("aria-pressed", String(selected));
+            });
+          });
+          gallery.append(thumbnail);
+        });
+
         const info = document.createElement("div");
         info.className = "product-info";
         const subtitle = document.createElement("small");
         subtitle.textContent = category.subtitle;
         const title = document.createElement("h3");
         title.textContent = category.title;
+        const price = document.createElement("p");
+        price.className = `product-price${category.price === null ? " on-request" : ""}`;
+        price.textContent = category.price === null
+          ? "الثمن عند الطلب"
+          : new Intl.NumberFormat("ar-MA", { style: "currency", currency: "MAD", maximumFractionDigits: 2 }).format(category.price);
         const link = document.createElement("a");
         link.className = "product-link product-whatsapp";
         link.href = `https://wa.me/${siteData.links.whatsapp}?text=${encodeURIComponent(`السلام عليكم، بغيت نسول على ${category.title}`)}`;
@@ -831,8 +885,8 @@
         arrow.setAttribute("aria-hidden", "true");
         arrow.textContent = "←";
         link.append(linkText, arrow);
-        info.append(subtitle, title, link);
-        card.append(photo, info);
+        info.append(subtitle, title, price, link);
+        card.append(photo, gallery, info);
         list.append(card);
       }
 
@@ -1092,9 +1146,15 @@
       for (const category of siteData.categories) {
         const card = document.createElement("article");
         card.className = "admin-category-card";
-        const preview = document.createElement("img");
-        preview.src = category.image;
-        preview.alt = category.title;
+        const gallery = document.createElement("div");
+        gallery.className = "admin-category-gallery";
+        const previews = category.images.map((source, index) => {
+          const preview = document.createElement("img");
+          preview.src = source;
+          preview.alt = `${category.title} - الصورة ${index + 1}`;
+          gallery.append(preview);
+          return preview;
+        });
 
         const fields = document.createElement("div");
         fields.className = "admin-category-fields";
@@ -1113,7 +1173,9 @@
           input.value = category[key];
           input.addEventListener("input", () => {
             category[key] = input.value;
-            preview.alt = category.title;
+            previews.forEach((preview, index) => {
+              preview.alt = `${category.title} - الصورة ${index + 1}`;
+            });
             applySiteData(siteData);
             setAdminStatus("كاينة تغييرات مازال ما تحفظاتش.");
           });
@@ -1121,59 +1183,92 @@
           fields.append(label);
         }
 
-        const tools = document.createElement("div");
-        tools.className = "admin-category-tools";
-        const select = document.createElement("select");
-        select.setAttribute("aria-label", `اختيار صورة ${category.name}`);
-        if (!sourceNames.has(category.image)) {
-          const uploaded = document.createElement("option");
-          uploaded.value = category.image;
-          uploaded.textContent = "الصورة المرفوعة الحالية";
-          select.append(uploaded);
-        }
-        for (const source of availableImages) {
-          const option = document.createElement("option");
-          option.value = source;
-          option.textContent = sourceNames.get(source);
-          select.append(option);
-        }
-        select.value = category.image;
-        select.addEventListener("change", () => {
-          category.image = select.value;
-          preview.src = select.value;
+        const priceLabel = document.createElement("label");
+        priceLabel.className = "admin-field";
+        const priceTitle = document.createElement("span");
+        priceTitle.textContent = "الثمن بالدرهم (خليه فارغ إلا كان عند الطلب)";
+        const priceInput = document.createElement("input");
+        priceInput.type = "number";
+        priceInput.min = "0";
+        priceInput.max = "1000000";
+        priceInput.step = "0.01";
+        priceInput.inputMode = "decimal";
+        priceInput.dir = "ltr";
+        priceInput.placeholder = "عند الطلب";
+        priceInput.value = category.price ?? "";
+        priceInput.addEventListener("input", () => {
+          category.price = priceInput.value === "" ? null : Number(priceInput.value);
           applySiteData(siteData);
           setAdminStatus("كاينة تغييرات مازال ما تحفظاتش.");
         });
+        priceLabel.append(priceTitle, priceInput);
+        fields.append(priceLabel);
 
-        const upload = document.createElement("input");
-        upload.type = "file";
-        upload.accept = "image/jpeg,image/png,image/webp";
-        upload.setAttribute("aria-label", `رفع صورة للقسم ${category.name}`);
-        upload.addEventListener("change", async () => {
-          const [file] = upload.files;
-          if (!file) return;
-          if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 10 * 1024 * 1024) {
-            setAdminStatus("اختاري صورة JPG أو PNG أو WebP وحجمها أقل من 10 ميغابايت.", true);
-            upload.value = "";
-            return;
+        const tools = document.createElement("div");
+        tools.className = "admin-category-tools";
+        category.images.forEach((source, index) => {
+          const control = document.createElement("label");
+          control.className = "admin-category-image-control";
+          const controlTitle = document.createElement("span");
+          controlTitle.textContent = `الصورة ${index + 1}`;
+
+          const select = document.createElement("select");
+          select.setAttribute("aria-label", `اختيار الصورة ${index + 1} لـ ${category.name}`);
+          if (!sourceNames.has(source)) {
+            const uploaded = document.createElement("option");
+            uploaded.value = source;
+            uploaded.textContent = "الصورة المرفوعة الحالية";
+            select.append(uploaded);
           }
-          try {
-            const uploadedImage = await compressImage(file);
-            category.image = uploadedImage;
-            preview.src = uploadedImage;
-            const uploadedOption = document.createElement("option");
-            uploadedOption.value = uploadedImage;
-            uploadedOption.textContent = "الصورة المرفوعة الحالية";
-            select.prepend(uploadedOption);
-            select.value = uploadedImage;
+          for (const availableImage of availableImages) {
+            const option = document.createElement("option");
+            option.value = availableImage;
+            option.textContent = sourceNames.get(availableImage);
+            select.append(option);
+          }
+          select.value = source;
+          select.addEventListener("change", () => {
+            category.images[index] = select.value;
+            previews[index].src = select.value;
             applySiteData(siteData);
-            setAdminStatus("تم تجهيز الصورة؛ حفظي التغييرات باش تبقى مخزنة.");
-          } catch (error) {
-            console.error("Could not process the uploaded category image.", error);
-            setAdminStatus(`تعذر تجهيز الصورة: ${error.message}`, true);
-          } finally {
-            upload.value = "";
-          }
+            setAdminStatus("كاينة تغييرات مازال ما تحفظاتش.");
+          });
+
+          const upload = document.createElement("input");
+          upload.type = "file";
+          upload.accept = "image/jpeg,image/png,image/webp";
+          upload.setAttribute("aria-label", `رفع الصورة ${index + 1} لـ ${category.name}`);
+          upload.addEventListener("change", async () => {
+            const [file] = upload.files;
+            if (!file) return;
+            if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 10 * 1024 * 1024) {
+              setAdminStatus("اختاري صورة JPG أو PNG أو WebP وحجمها أقل من 10 ميغابايت.", true);
+              upload.value = "";
+              return;
+            }
+            try {
+              const uploadedImage = await compressImage(file);
+              category.images[index] = uploadedImage;
+              previews[index].src = uploadedImage;
+              let uploadedOption = [...select.options].find((option) => option.value === uploadedImage);
+              if (!uploadedOption) {
+                uploadedOption = document.createElement("option");
+                uploadedOption.value = uploadedImage;
+                uploadedOption.textContent = "الصورة المرفوعة الحالية";
+                select.prepend(uploadedOption);
+              }
+              select.value = uploadedImage;
+              applySiteData(siteData);
+              setAdminStatus("تم تجهيز الصورة؛ حفظي التغييرات باش تبقى مخزنة.");
+            } catch (error) {
+              console.error("Could not process the uploaded category image.", error);
+              setAdminStatus(`تعذر تجهيز الصورة: ${error.message}`, true);
+            } finally {
+              upload.value = "";
+            }
+          });
+          control.append(controlTitle, select, upload);
+          tools.append(control);
         });
 
         const remove = document.createElement("button");
@@ -1191,8 +1286,7 @@
           setAdminStatus("تحيد القسم من المعاينة؛ حفظي التعديلات للتثبيت.");
         });
 
-        tools.append(select, upload, remove);
-        card.append(preview, fields, tools);
+        card.append(gallery, fields, tools, remove);
         categoryEditor.append(card);
       }
 
@@ -1205,7 +1299,7 @@
         const image = new Image();
         image.onload = () => {
           URL.revokeObjectURL(temporaryUrl);
-          const scale = Math.min(1, 1400 / Math.max(image.naturalWidth, image.naturalHeight));
+          const scale = Math.min(1, 1100 / Math.max(image.naturalWidth, image.naturalHeight));
           const canvas = document.createElement("canvas");
           canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
           canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
@@ -1217,8 +1311,8 @@
           context.fillStyle = "#ffffff";
           context.fillRect(0, 0, canvas.width, canvas.height);
           context.drawImage(image, 0, 0, canvas.width, canvas.height);
-          const result = canvas.toDataURL("image/jpeg", 0.78);
-          if (result.length > 700000) {
+          const result = canvas.toDataURL("image/jpeg", 0.68);
+          if (result.length > 260000) {
             reject(new Error("الصورة بقات كبيرة بزاف من بعد الضغط؛ اختاري صورة أصغر."));
             return;
           }
@@ -1322,7 +1416,8 @@
         name: "قسم جديد",
         subtitle: "اختيارات أنيقة",
         title: "منتجات جديدة",
-        image: availableImages[0]
+        price: null,
+        images: defaultCategories[0].images.slice()
       });
       renderCategoryEditor();
       applySiteData(siteData);
